@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f7f3">
+
+<title>485 MUSIC | Upload Studio</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --gold: #b89452;
+  --gold-dark: #92713b;
+  --bg: #f8f7f3;
+  --white: #ffffff;
+  --text: #25241f;
+  --muted: #77746c;
+  --border: #e9e5db;
+  --green: #26734d;
+  --red: #b54141;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.container {
+  width: min(1150px, 94%);
+  margin: auto;
+}
+
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.brand {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.brand span {
+  color: var(--gold);
+}
+
+.header-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+main {
+  padding: 35px 0 65px;
+}
+
+h1 {
+  font-size: clamp(27px, 5vw, 38px);
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 25px;
+  margin-top: 25px;
+  box-shadow: 0 5px 22px rgba(0,0,0,.025);
+}
+
+.card h2 {
+  font-size: 19px;
+  margin: 0 0 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.field {
+  margin-bottom: 17px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+}
+
+textarea {
+  min-height: 115px;
+  resize: vertical;
+}
+
+.help {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 13px 19px;
+  font-weight: 700;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--gold-dark);
+}
+
+.btn-secondary {
+  background: #f0eee8;
+  color: var(--text);
+}
+
+.btn-danger {
+  background: #fff0f0;
+  color: var(--red);
+}
+
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.status {
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  display: none;
+}
+
+.status.success {
+  display: block;
+  background: #eaf6ef;
+  color: var(--green);
+}
+
+.status.error {
+  display: block;
+  background: #fff0f0;
+  color: var(--red);
+}
+
+.status.info {
+  display: block;
+  background: #f3f0e8;
+  color: #67552f;
+}
+
+.login-wrap {
+  max-width: 430px;
+  margin: 65px auto;
+}
+
+.login-wrap .card {
+  margin-top: 20px;
+}
+
+.product-list {
+  display: grid;
+  gap: 12px;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 14px;
+}
+
+.product-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.product-meta {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #f2eee5;
+  color: #765c2c;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge.approved {
+  background: #e8f5ed;
+  color: var(--green);
+}
+
+.badge.draft {
+  background: #f0eee8;
+  color: #666;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.email-display {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.progress-track {
+  width: 100%;
+  height: 7px;
+  background: #eeeae1;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 12px;
+  display: none;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+  transition: width .2s;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 0;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+@media(max-width:700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: auto;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .header-inner {
+    align-items: flex-start;
+  }
+
+  .product {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .top-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div>
+      <div class="brand">485 <span>MUSIC</span></div>
+      <div class="header-label">ADMIN UPLOAD STUDIO</div>
+    </div>
+
+    <div id="headerActions" class="top-actions hidden">
+      <div id="userEmail" class="email-display"></div>
+      <button class="btn btn-secondary" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- LOGIN -->
+  <section id="loginSection" class="login-wrap">
+    <h1>Admin login.</h1>
+    <p class="subtitle">
+      Secure access to the 485 MUSIC product upload system.
+    </p>
+
+    <div class="card">
+      <h2>Administrator access</h2>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="loginEmail">Email address</label>
+          <input
+            id="loginEmail"
+            type="email"
+            value="marshaladams1@gmail.com"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div id="loginStatus" class="status"></div>
+
+        <button class="btn btn-primary" id="loginBtn" type="submit">
+          Sign in
+        </button>
+      </form>
+
+      <p class="help">
+        Use your existing Supabase account. Your password is not stored
+        in this application.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- DASHBOARD -->
+  <section id="dashboardSection" class="hidden">
+
+    <div>
+      <h1>Upload Studio.</h1>
+      <p class="subtitle">
+        Manage your beats, instrumentals, sample packs and production tools.
+      </p>
+    </div>
+
+    <div id="dashboardStatus" class="status"></div>
+
+    <!-- UPLOAD FORM -->
+    <div class="card">
+      <h2>01 — Add a product</h2>
+
+      <form id="productForm">
+
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="productTitle">Product title *</label>
+            <input
+              id="productTitle"
+              type="text"
+              maxlength="120"
+              placeholder="Example: LordMarshal Afro Trap Essentials"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="productCategory">Category *</label>
+            <select id="productCategory" required>
+              <option value="">Loading categories...</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="productPrice">Price in Nigerian Naira (₦) *</label>
+            <input
+              id="productPrice"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="5000"
+              required
+            >
+            <div class="help">
+              Enter the amount in naira, not kobo.
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="productDescription">Short description</label>
+            <textarea
+              id="productDescription"
+              maxlength="2000"
+              placeholder="Describe the sounds, contents and intended use of this product."
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label for="coverFile">Product artwork *</label>
+            <input
+              id="coverFile"
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              required
+            >
+            <div class="help">JPG, PNG or WEBP.</div>
+          </div>
+
+          <div class="field">
+            <label for="previewFile">Audio preview *</label>
+            <input
+              id="previewFile"
+              type="file"
+              accept=".mp3,.wav,.m4a,.ogg,audio/*"
+              required
+            >
+            <div class="help">MP3, WAV, M4A or OGG.</div>
+          </div>
+
+          <div class="field full">
+            <label for="downloadFile">Full product download *</label>
+            <input
+              id="downloadFile"
+              type="file"
+              accept=".zip,.rar,.7z,application/zip,application/x-rar-compressed,application/x-7z-compressed"
+              required
+            >
+            <div class="help">
+              Upload the complete ZIP, RAR or 7Z product archive.
+              This file will remain in private storage.
+            </div>
+          </div>
+
+        </div>
+
+        <div id="uploadStatus" class="status"></div>
+
+        <div id="progressTrack" class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div class="actions" style="margin-top:20px">
+          <button class="btn btn-primary" id="uploadBtn" type="submit">
+            Upload product
+          </button>
+
+          <button class="btn btn-secondary" type="reset" id="resetBtn">
+            Clear form
+          </button>
+        </div>
+
+        <p class="help">
+          Products are registered with status PENDING. Uploading does not
+          automatically publish them or enable customer downloads.
+        </p>
+
+      </form>
+    </div>
+
+
+    <!-- PRODUCT MANAGEMENT -->
+    <div class="card">
+      <h2>02 — Your products</h2>
+
+      <div class="actions" style="margin-bottom:18px">
+        <button class="btn btn-secondary" id="refreshBtn">
+          Refresh products
+        </button>
+      </div>
+
+      <div id="productList" class="product-list">
+        <p class="subtitle">Loading products...</p>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  485 MUSIC Upload Studio · Secure administration
+</footer>
+
+
+<script>
+/* =========================================
+   485 MUSIC SUPABASE CONFIGURATION
+========================================= */
+
+const SUPABASE_URL =
+  "https://jrupwyaggntgsulpaqyq.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_JoplUxXVcfBfb2dDltRyaQ_qk6b01jy";
+
+const PREVIEW_BUCKET = "485-previews";
+const DOWNLOAD_BUCKET = "485-downloads";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loginSection = document.getElementById("loginSection");
+const dashboardSection = document.getElementById("dashboardSection");
+const headerActions = document.getElementById("headerActions");
+
+const loginForm = document.getElementById("loginForm");
+const productForm = document.getElementById("productForm");
+
+const loginStatus = document.getElementById("loginStatus");
+const dashboardStatus = document.getElementById("dashboardStatus");
+const uploadStatus = document.getElementById("uploadStatus");
+
+const uploadBtn = document.getElementById("uploadBtn");
+const progressTrack = document.getElementById("progressTrack");
+const progressBar = document.getElementById("progressBar");
+
+
+/* =========================================
+   STATUS MESSAGES
+========================================= */
+
+function showStatus(element, message, type = "info") {
+  element.textContent = message;
+  element.className = "status " + type;
+}
+
+function clearStatus(element) {
+  element.textContent = "";
+  element.className = "status";
+}
+
+function setProgress(value) {
+  progressTrack.style.display = "block";
+  progressBar.style.width = value + "%";
+}
+
+
+/* =========================================
+   AUTHENTICATION AND ADMIN CHECK
+========================================= */
+
+let currentUser = null;
+
+async function verifyAdmin() {
+  const { data, error } = await supabaseClient.rpc("is_485_admin");
+
+  if (error) {
+    throw new Error(
+      "Could not verify administrator access: " + error.message
+    );
+  }
+
+  if (data !== true) {
+    throw new Error(
+      "This account is not registered as a 485 MUSIC administrator."
+    );
+  }
+
+  return true;
+}
+
+
+async function showDashboard(user) {
+  try {
+    await verifyAdmin();
+
+    currentUser = user;
+
+    loginSection.classList.add("hidden");
+    dashboardSection.classList.remove("hidden");
+    headerActions.classList.remove("hidden");
+
+    document.getElementById("userEmail").textContent =
+      user.email || "Administrator";
+
+    await loadCategories();
+    await loadProducts();
+
+  } catch (error) {
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    loginSection.classList.remove("hidden");
+    dashboardSection.classList.add("hidden");
+    headerActions.classList.add("hidden");
+
+    showStatus(loginStatus, error.message, "error");
+  }
+}
+
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  clearStatus(loginStatus);
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  const loginBtn = document.getElementById("loginBtn");
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Signing in...";
+
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
+    await showDashboard(data.user);
+
+  } catch (error) {
+    showStatus(loginStatus, error.message, "error");
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign in";
+  }
+});
+
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+
+  dashboardSection.classList.add("hidden");
+  headerActions.classList.add("hidden");
+  loginSection.classList.remove("hidden");
+
+  loginForm.reset();
+  document.getElementById("loginEmail").value =
+    "marshaladams1@gmail.com";
+});
+
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    dashboardSection.classList.add("hidden");
+    headerActions.classList.add("hidden");
+    loginSection.classList.remove("hidden");
+  }
+});
+
+
+async function initializeApp() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    showStatus(loginStatus, error.message, "error");
+    return;
+  }
+
+  if (data.session && data.session.user) {
+    await showDashboard(data.session.user);
+  }
+}
+
+
+/* =========================================
+   LOAD PRODUCT CATEGORIES
+========================================= */
+
+async function loadCategories() {
+  const select = document.getElementById("productCategory");
+
+  select.innerHTML = "<option value=''>Loading...</option>";
+
+  const { data, error } = await supabaseClient
+    .from("product_categories")
+    .select("id,name,slug")
+    .order("name");
+
+  if (error) {
+    select.innerHTML = "<option value=''>Could not load categories</option>";
+    throw new Error("Category loading failed: " + error.message);
+  }
+
+  if (!data || data.length === 0) {
+    select.innerHTML = "<option value=''>No categories found</option>";
+    return;
+  }
+
+  select.innerHTML = "<option value=''>Select a category</option>";
+
+  data.forEach(category => {
+    const option = document.createElement("option");
+
+    option.value = category.id;
+    option.textContent = category.name;
+
+    select.appendChild(option);
+  });
+}
+
+
+/* =========================================
+   FILE VALIDATION
+========================================= */
+
+function validateFile(file, allowedExtensions, label) {
+  if (!file) {
+    throw new Error(label + " is required.");
+  }
+
+  const extension = file.name.split(".").pop().toLowerCase();
+
+  if (!allowedExtensions.includes(extension)) {
+    throw new Error(
+      "Unsupported " + label.toLowerCase() + " format: ." + extension
+    );
+  }
+}
+
+
+function safeFileName(name) {
+  return name
+    .normalize("NFKD")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .toLowerCase();
+}
+
+
+function makeSlug(title) {
+  return title
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+
+/* =========================================
+   STORAGE UPLOAD
+========================================= */
+
+async function uploadStorageFile(bucket, path, file) {
+  const { data, error } = await supabaseClient.storage
+    .from(bucket)
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+  if (error) {
+    throw new Error(
+      "File upload failed (" + file.name + "): " + error.message
+    );
+  }
+
+  return data.path;
+}
+
+
+/* =========================================
+   CREATE PRODUCT
+========================================= */
+
+productForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  clearStatus(uploadStatus);
+
+  if (!currentUser) {
+    showStatus(uploadStatus, "Your login session has expired.", "error");
+    return;
+  }
+
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = "Uploading...";
+
+  setProgress(5);
+
+  const uploadedPaths = [];
+
+  try {
+    // Recheck administrator access before every upload.
+    await verifyAdmin();
+
+    const title =
+      document.getElementById("productTitle").value.trim();
+
+    const categoryId =
+      document.getElementById("productCategory").value;
+
+    const description =
+      document.getElementById("productDescription").value.trim();
+
+    const priceNaira =
+      Number(document.getElementById("productPrice").value);
+
+    const coverFile =
+      document.getElementById("coverFile").files[0];
+
+    const previewFile =
+      document.getElementById("previewFile").files[0];
+
+    const downloadFile =
+      document.getElementById("downloadFile").files[0];
+
+    if (!title || !categoryId) {
+      throw new Error("Enter a product title and select a category.");
+    }
+
+    if (!Number.isSafeInteger(priceNaira) || priceNaira < 0) {
+      throw new Error("Enter a valid whole-number price in naira.");
+    }
+
+    const priceKobo = priceNaira * 100;
+
+    if (!Number.isSafeInteger(priceKobo)) {
+      throw new Error("The product price is too large.");
+    }
+
+    validateFile(
+      coverFile,
+      ["jpg", "jpeg", "png", "webp"],
+      "Artwork"
+    );
+
+    validateFile(
+      previewFile,
+      ["mp3", "wav", "m4a", "ogg"],
+      "Audio preview"
+    );
+
+    validateFile(
+      downloadFile,
+      ["zip", "rar", "7z"],
+      "Download archive"
+    );
+
+    const userId = currentUser.id;
+    const unique = Date.now().toString();
+
+    const folder = userId + "/";
+
+    const coverPath =
+      folder + unique + "-cover-" + safeFileName(coverFile.name);
+
+    const previewPath =
+      folder + unique + "-preview-" + safeFileName(previewFile.name);
+
+    const downloadPath =
+      folder + unique + "-download-" + safeFileName(downloadFile.name);
+
+
+    // 1. Upload artwork.
+    showStatus(uploadStatus, "Uploading product artwork...", "info");
+
+    await uploadStorageFile(
+      PREVIEW_BUCKET,
+      coverPath,
+      coverFile
+    );
+
+    uploadedPaths.push({
+      bucket: PREVIEW_BUCKET,
+      path: coverPath
+    });
+
+    setProgress(30);
+
+
+    // 2. Upload preview audio.
+    showStatus(uploadStatus, "Uploading audio preview...", "info");
+
+    await uploadStorageFile(
+      PREVIEW_BUCKET,
+      previewPath,
+      previewFile
+    );
+
+    uploadedPaths.push({
+      bucket: PREVIEW_BUCKET,
+      path: previewPath
+    });
+
+    setProgress(55);
+
+
+    // 3. Upload full private download archive.
+    showStatus(uploadStatus, "Uploading full product archive...", "info");
+
+    await uploadStorageFile(
+      DOWNLOAD_BUCKET,
+      downloadPath,
+      downloadFile
+    );
+
+    uploadedPaths.push({
+      bucket: DOWNLOAD_BUCKET,
+      path: downloadPath
+    });
+
+    setProgress(85);
+
+
+    // 4. Register product in the database.
+    showStatus(
+      uploadStatus,
+      "Registering product in the 485 MUSIC database...",
+      "info"
+    );
+
+    const baseSlug = makeSlug(title);
+
+    const productSlug =
+      baseSlug + "-" + unique;
+
+    const productRecord = {
+      producer_id: userId,
+      category_id: categoryId,
+      title: title,
+      slug: productSlug,
+      description: description || null,
+      price_kobo: priceKobo,
+      currency: "NGN",
+      cover_image_path: coverPath,
+      preview_audio_path: previewPath,
+      download_file_path: downloadPath,
+      status: "pending"
+    };
+
+    const { data: insertedProduct, error: insertError } =
+      await supabaseClient
+        .from("products")
+        .insert(productRecord)
+        .select("id,title,status")
+        .single();
+
+    if (insertError) {
+      throw new Error(
+        "Files uploaded, but product registration failed: " +
+        insertError.message +
+        ". The uploaded files may need administrator cleanup."
+      );
+    }
+
+    setProgress(100);
+
+    showStatus(
+      uploadStatus,
+      "Product successfully uploaded and registered. Status: PENDING. Product ID: " +
+      insertedProduct.id,
+      "success"
+    );
+
+    productForm.reset();
+
+    await loadProducts();
+
+  } catch (error) {
+    showStatus(uploadStatus, error.message, "error");
+
+    if (uploadedPaths.length > 0) {
+      console.warn(
+        "Some files were uploaded before the operation failed. " +
+        "Review these paths for possible cleanup:",
+        uploadedPaths
+      );
+    }
+
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = "Upload product";
+
+    setTimeout(() => {
+      progressTrack.style.display = "none";
+      progressBar.style.width = "0%";
+    }, 1800);
+  }
+});
+
+
+/* =========================================
+   LOAD ADMIN PRODUCTS
+========================================= */
+
+async function loadProducts() {
+  const list = document.getElementById("productList");
+
+  list.innerHTML = "<p class='subtitle'>Loading products...</p>";
+
+  if (!currentUser) {
+    list.textContent = "Please sign in again.";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select(`
+      id,
+      title,
+      slug,
+      price_kobo,
+      currency,
+      status,
+      created_at,
+      product_categories(name)
+    `)
+    .eq("producer_id", currentUser.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    list.textContent = "Could not load products: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML =
+      "<p class='subtitle'>No products uploaded yet. Your first product will appear here.</p>";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(product => {
+    const item = document.createElement("div");
+    item.className = "product";
+
+    const info = document.createElement("div");
+
+    const title = document.createElement("div");
+    title.className = "product-title";
+    title.textContent = product.title;
+
+    const meta = document.createElement("div");
+    meta.className = "product-meta";
+
+    const category =
+      product.product_categories?.name || "Uncategorised";
+
+    const amount =
+      new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        maximumFractionDigits: 0
+      }).format(product.price_kobo / 100);
+
+    meta.textContent =
+      category + " · " + amount + " · " +
+      new Date(product.created_at).toLocaleDateString();
+
+    info.appendChild(title);
+    info.appendChild(meta);
+
+    const badge = document.createElement("span");
+    badge.className =
+      "badge " + (product.status === "approved"
+        ? "approved"
+        : product.status === "draft"
+        ? "draft"
+        : "");
+
+    badge.textContent = product.status;
+
+    item.appendChild(info);
+    item.appendChild(badge);
+
+    list.appendChild(item);
+  });
+}
+
+
+document.getElementById("refreshBtn").addEventListener(
+  "click",
+  loadProducts
+);
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+initializeApp();
+
+</script>
+
+</body>
+</html>

@@ -9,15 +9,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
+:root {
   --gold:#c6a15b;
   --gold-light:#ead5a4;
   --gold-dark:#98733b;
   --ink:#f4f0e7;
   --muted:#a09b91;
   --paper:#090909;
-  --white:#151515;
-  --panel:#111111;
+  --panel:#111;
   --panel-light:#191919;
   --line:#302b22;
   --green:#65bd87;
@@ -28,14 +27,11 @@
 }
 
 *{box-sizing:border-box}
-
 html{scroll-behavior:smooth}
 
 body{
   margin:0;
-  background:
-    radial-gradient(ellipse at top,rgba(198,161,91,.055),transparent 45%),
-    var(--paper);
+  background:radial-gradient(ellipse at top,rgba(198,161,91,.055),transparent 45%),var(--paper);
   color:var(--ink);
   font-family:Inter,Arial,sans-serif;
   min-height:100vh;
@@ -94,9 +90,7 @@ h1{
   letter-spacing:-.7px;
 }
 
-h2{
-  color:var(--gold-light);
-}
+h2{color:var(--gold-light)}
 
 .subtitle{
   color:var(--muted);
@@ -116,7 +110,6 @@ h2{
 .card h2{
   font-size:17px;
   margin:0 0 20px;
-  letter-spacing:.2px;
 }
 
 label{
@@ -138,9 +131,7 @@ input,textarea,select{
   transition:border-color .2s,box-shadow .2s;
 }
 
-input::placeholder,textarea::placeholder{
-  color:#77736b;
-}
+input::placeholder,textarea::placeholder{color:#77736b}
 
 input:focus,textarea:focus,select:focus{
   border-color:var(--gold);
@@ -163,19 +154,10 @@ input[type="file"]::file-selector-button{
   cursor:pointer;
 }
 
-input[type="checkbox"],input[type="radio"]{
-  accent-color:var(--gold);
-}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--gold)}
+select option{background:#111;color:#fff}
 
-select option{
-  background:#111;
-  color:#fff;
-}
-
-textarea{
-  min-height:105px;
-  resize:vertical;
-}
+textarea{min-height:105px;resize:vertical}
 
 small,.hint{
   color:var(--muted);
@@ -217,10 +199,7 @@ small,.hint{
   box-shadow:inset 0 0 0 1px rgba(198,161,91,.12);
 }
 
-.mode-option input{
-  width:auto;
-  margin-right:8px;
-}
+.mode-option input{width:auto;margin-right:8px}
 
 .btn{
   border:1px solid transparent;
@@ -259,17 +238,15 @@ small,.hint{
   border-color:#63312e;
 }
 
+.btn-danger:hover{background:#421e1c;border-color:#a54e47}
+
 .btn-success{
   background:#14271c;
   color:#79d49a;
   border-color:#315c40;
 }
 
-.btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
 .submit-row,.product-actions{
   margin-top:17px;
@@ -326,23 +303,11 @@ small,.hint{
   color:var(--gold-light);
 }
 
-.license-heading input{
-  width:auto;
-  margin:0;
-}
+.license-heading input{width:auto;margin:0}
+.license-heading label{margin:0;color:var(--gold-light)}
 
-.license-heading label{
-  margin:0;
-  color:var(--gold-light);
-}
-
-.license-fields{
-  display:none;
-  margin-top:12px;
-}
-
+.license-fields{display:none;margin-top:12px}
 .license-fields.active{display:block}
-
 .license-fields label{margin-top:12px}
 
 .badge{
@@ -357,28 +322,12 @@ small,.hint{
   font-weight:750;
 }
 
-.badge.approved{
-  background:#14271c;
-  color:#79d49a;
-}
-
-.badge.pending{
-  background:#302513;
-  color:#e5bd71;
-}
-
-.badge.draft{
-  background:#18232d;
-  color:#9bbbd8;
-}
-
-.badge.unknown{
-  background:#282828;
-  color:#aaa;
-}
+.badge.approved{background:#14271c;color:#79d49a}
+.badge.pending{background:#302513;color:#e5bd71}
+.badge.draft{background:#18232d;color:#9bbbd8}
+.badge.unknown{background:#282828;color:#aaa}
 
 .hidden{display:none!important}
-
 #app{display:none}
 
 footer{
@@ -449,10 +398,7 @@ footer{
   transition:.2s;
 }
 
-.filter-button:hover{
-  border-color:var(--gold);
-  color:var(--gold-light);
-}
+.filter-button:hover{border-color:var(--gold);color:var(--gold-light)}
 
 .filter-button.active{
   background:#292113;
@@ -468,9 +414,7 @@ footer{
   background:#101010;
 }
 
-.product-card:hover{
-  border-color:#625034;
-}
+.product-card:hover{border-color:#625034}
 
 .product-top{
   display:flex;
@@ -573,15 +517,8 @@ footer{
   font-size:13px;
 }
 
-hr{
-  border:0;
-  border-top:1px solid var(--line);
-  margin:25px 0;
-}
-
-#managementCard>div:first-child strong{
-  color:var(--gold-light);
-}
+hr{border:0;border-top:1px solid var(--line);margin:25px 0}
+#managementCard>div:first-child strong{color:var(--gold-light)}
 
 @media(max-width:650px){
   .grid,.detail-grid{grid-template-columns:1fr}
@@ -651,12 +588,10 @@ hr{
         <div class="stat-number" id="pendingCount">0</div>
         <div class="stat-label">Pending Review</div>
       </div>
-
       <div class="stat-box">
         <div class="stat-number" id="approvedCount">0</div>
         <div class="stat-label">Approved</div>
       </div>
-
       <div class="stat-box">
         <div class="stat-number" id="draftCount">0</div>
         <div class="stat-label">Drafts</div>
@@ -668,13 +603,11 @@ hr{
 
   <div class="card">
     <h2>01 — Select Product Type</h2>
-
     <div class="mode-switch">
       <label class="mode-option">
         <input type="radio" name="productMode" value="digital_product" checked>
         Digital Product
       </label>
-
       <label class="mode-option">
         <input type="radio" name="productMode" value="beat">
         Beat / Instrumental
@@ -798,11 +731,9 @@ hr{
         <input type="checkbox" class="license-check" id="checkMp3">
         <label for="checkMp3">MP3 Lease</label>
       </div>
-
       <div class="license-fields" id="fieldsMp3">
         <label for="priceMp3">Price (NGN) *</label>
         <input id="priceMp3" type="number" min="1" step="1" placeholder="Example: 5000">
-
         <label for="fileMp3">MP3 file *</label>
         <input id="fileMp3" type="file" accept=".mp3,audio/mpeg">
       </div>
@@ -813,11 +744,9 @@ hr{
         <input type="checkbox" class="license-check" id="checkWav">
         <label for="checkWav">WAV Lease</label>
       </div>
-
       <div class="license-fields" id="fieldsWav">
         <label for="priceWav">Price (NGN) *</label>
         <input id="priceWav" type="number" min="1" step="1" placeholder="Example: 10000">
-
         <label for="fileWav">WAV file *</label>
         <input id="fileWav" type="file" accept=".wav,audio/wav">
       </div>
@@ -828,11 +757,9 @@ hr{
         <input type="checkbox" class="license-check" id="checkTrackout">
         <label for="checkTrackout">Trackout Lease</label>
       </div>
-
       <div class="license-fields" id="fieldsTrackout">
         <label for="priceTrackout">Price (NGN) *</label>
         <input id="priceTrackout" type="number" min="1" step="1" placeholder="Example: 25000">
-
         <label for="fileTrackout">Trackout ZIP file *</label>
         <input id="fileTrackout" type="file" accept=".zip,.rar,.7z">
       </div>
@@ -843,14 +770,11 @@ hr{
         <input type="checkbox" class="license-check" id="checkExclusive">
         <label for="checkExclusive">Exclusive Rights</label>
       </div>
-
       <div class="license-fields" id="fieldsExclusive">
         <label for="priceExclusive">Price (NGN) *</label>
         <input id="priceExclusive" type="number" min="1" step="1" placeholder="Example: 150000">
-
         <label for="fileExclusive">Exclusive WAV file *</label>
         <input id="fileExclusive" type="file" accept=".wav,audio/wav">
-
         <label for="fileAgreement">Licence agreement (optional)</label>
         <input id="fileAgreement" type="file" accept=".pdf,.doc,.docx">
       </div>
@@ -869,7 +793,6 @@ hr{
         <h2 style="margin:0">04 — Product Management</h2>
         <p class="hint" style="margin:6px 0 0">Review submissions and control what appears in the public marketplace.</p>
       </div>
-
       <button class="btn btn-secondary" id="refreshProducts">Refresh</button>
     </div>
 
@@ -897,7 +820,7 @@ hr{
 <script>
 "use strict";
 
-/* SUPABASE */
+/* SUPABASE CONFIGURATION */
 const SUPABASE_URL = "https://jrupwyaggntgsulpaqyq.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_JoplUxXVcfBfb2dDltRyaQ_qk6b01jy";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
@@ -915,7 +838,7 @@ let actionInProgress = false;
 let dashboardPromise = null;
 let dashboardUserId = null;
 
-/* HELPERS */
+/* GENERAL HELPERS */
 function showStatus(id,message,type="info"){
   const el=document.getElementById(id);
   el.className="status "+type;
@@ -961,11 +884,7 @@ function formatMoney(kobo){
 
 function escapeHTML(text){
   return String(text??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#039;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   })[c]);
 }
 
@@ -989,13 +908,8 @@ function validPrice(price){
 async function verifyAdmin(){
   const {data,error}=await supabaseClient.rpc("is_485_admin");
 
-  if(error){
-    throw new Error("Administrator verification failed: "+error.message);
-  }
-
-  if(data!==true){
-    throw new Error("This account does not have 485 MUSIC administrator access.");
-  }
+  if(error)throw new Error("Administrator verification failed: "+error.message);
+  if(data!==true)throw new Error("This account does not have 485 MUSIC administrator access.");
 
   adminVerified=true;
 }
@@ -1030,7 +944,6 @@ async function showDashboard(user){
       document.getElementById("loginSection").style.display="block";
 
       showStatus("loginStatus",error.message,"error");
-
       await supabaseClient.auth.signOut();
 
     }finally{
@@ -1043,7 +956,6 @@ async function showDashboard(user){
 
 document.getElementById("loginForm").addEventListener("submit",async event=>{
   event.preventDefault();
-
   clearStatus("loginStatus");
   setButtonLoading("loginButton",true,"Sign In");
 
@@ -1054,12 +966,10 @@ document.getElementById("loginForm").addEventListener("submit",async event=>{
     });
 
     if(error)throw error;
-
     await showDashboard(data.user);
 
   }catch(error){
     showStatus("loginStatus",error.message,"error");
-
   }finally{
     setButtonLoading("loginButton",false,"Sign In");
   }
@@ -1092,9 +1002,7 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
     setTimeout(()=>showDashboard(session.user),0);
   }
 
-  if(event==="SIGNED_OUT"){
-    resetDashboard();
-  }
+  if(event==="SIGNED_OUT")resetDashboard();
 });
 
 async function initialise(){
@@ -1105,9 +1013,7 @@ async function initialise(){
     return;
   }
 
-  if(data.session?.user){
-    await showDashboard(data.session.user);
-  }
+  if(data.session?.user)await showDashboard(data.session.user);
 }
 
 /* CATEGORIES */
@@ -1117,9 +1023,7 @@ async function loadCategories(){
     .select("id,name,slug")
     .order("name");
 
-  if(error){
-    throw new Error("Could not load product categories: "+error.message);
-  }
+  if(error)throw new Error("Could not load product categories: "+error.message);
 
   categories=data||[];
 
@@ -1161,7 +1065,6 @@ const licenceControls=[
 licenceControls.forEach(item=>{
   document.getElementById(item.checkbox).addEventListener("change",event=>{
     const active=event.target.checked;
-
     document.getElementById(item.fields).classList.toggle("active",active);
     document.getElementById(item.price).required=active;
     document.getElementById(item.file).required=active;
@@ -1176,9 +1079,7 @@ function getSelectedLicences(){
 async function uploadPrivateFile(bucket,path,file){
   if(!file)return null;
 
-  if(!currentUser||!adminVerified){
-    throw new Error("Administrator authentication is required.");
-  }
+  if(!currentUser||!adminVerified)throw new Error("Administrator authentication is required.");
 
   const {data,error}=await supabaseClient.storage.from(bucket).upload(path,file,{
     cacheControl:"3600",
@@ -1186,10 +1087,7 @@ async function uploadPrivateFile(bucket,path,file){
     contentType:file.type||undefined
   });
 
-  if(error){
-    throw new Error("File upload failed ("+file.name+"): "+error.message);
-  }
-
+  if(error)throw new Error("File upload failed ("+file.name+"): "+error.message);
   return data.path;
 }
 
@@ -1203,34 +1101,24 @@ async function uploadProductFile(bucket,userId,productId,folder,file){
 }
 
 async function removeUploadedFiles(bucket,paths){
-  const valid=paths.filter(Boolean);
-
+  const valid=[...new Set(paths.filter(Boolean))];
   if(!valid.length)return;
 
   const {error}=await supabaseClient.storage.from(bucket).remove(valid);
 
-  if(error){
-    console.warn("Storage cleanup failed:",error.message);
-  }
+  if(error)console.warn("Storage cleanup failed:",error.message);
 }
 
-/*
-Creates a short-lived signed URL only to test whether the private
-object exists and is accessible to the authenticated administrator.
-The URL is never displayed or stored in the database.
-*/
 async function verifyPrivateObject(bucket,path){
   if(!path||typeof path!=="string")return false;
 
   const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,60);
-
   return !error&&!!data?.signedUrl;
 }
 
 /* DIGITAL PRODUCT UPLOAD */
 document.getElementById("digitalForm").addEventListener("submit",async event=>{
   event.preventDefault();
-
   clearStatus("uploadStatus");
 
   if(!adminVerified||!currentUser){
@@ -1295,19 +1183,15 @@ document.getElementById("digitalForm").addEventListener("submit",async event=>{
     };
 
     const {error}=await supabaseClient.from("products").insert(product);
-
     if(error)throw error;
 
     productCreated=true;
-
     document.getElementById("digitalForm").reset();
 
     showStatus("uploadStatus","Digital product uploaded successfully and submitted for approval.","success");
-
     await loadProducts();
 
   }catch(error){
-
     if(!productCreated){
       await removeUploadedFiles(PREVIEW_BUCKET,previewPaths);
       await removeUploadedFiles(DOWNLOAD_BUCKET,downloadPaths);
@@ -1330,7 +1214,6 @@ document.getElementById("digitalForm").addEventListener("submit",async event=>{
 /* BEAT / INSTRUMENTAL UPLOAD */
 document.getElementById("beatForm").addEventListener("submit",async event=>{
   event.preventDefault();
-
   clearStatus("uploadStatus");
 
   if(!adminVerified||!currentUser){
@@ -1382,7 +1265,6 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     ?selectedFile("fileAgreement"):null;
 
   const buttonText="Upload Beat & Licences";
-
   setButtonLoading("beatSubmit",true,buttonText);
 
   const productId=newProductId();
@@ -1394,10 +1276,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     showStatus("uploadStatus","Uploading beat files. Please keep this page open.","info");
 
     const beatCategory=categories.find(item=>item.slug===BEAT_CATEGORY_SLUG);
-
-    if(!beatCategory){
-      throw new Error("Beats & Instrumentals category was not found.");
-    }
+    if(!beatCategory)throw new Error("Beats & Instrumentals category was not found.");
 
     let coverPath=null;
     let previewPath=null;
@@ -1416,7 +1295,6 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
 
     for(const licence of licenceData){
       const path=await uploadProductFile(DOWNLOAD_BUCKET,currentUser.id,productId,"licences",licence.file);
-
       downloadPaths.push(path);
 
       uploadedLicenceFiles.push({
@@ -1455,17 +1333,12 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     };
 
     const {error:productError}=await supabaseClient.from("products").insert(product);
-
     if(productError)throw productError;
 
     productCreated=true;
 
     const {error:detailsError}=await supabaseClient.from("beat_details").insert({
-      product_id:productId,
-      bpm,
-      musical_key:musicalKey,
-      genre,
-      mood
+      product_id:productId,bpm,musical_key:musicalKey,genre,mood
     });
 
     if(detailsError)throw detailsError;
@@ -1478,7 +1351,6 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     };
 
     for(const item of licenceData){
-
       const {data:licenceRecord,error:licenceError}=await supabaseClient
         .from("product_licenses")
         .insert({
@@ -1495,10 +1367,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       if(licenceError)throw licenceError;
 
       const fileRecord=uploadedLicenceFiles.find(file=>file.type===item.type);
-
-      if(!fileRecord){
-        throw new Error("Uploaded file record is missing for "+item.type+".");
-      }
+      if(!fileRecord)throw new Error("Uploaded file record is missing for "+item.type+".");
 
       const rows=[{
         license_id:licenceRecord.id,
@@ -1523,13 +1392,16 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       if(fileError)throw fileError;
     }
 
-    const {error:pendingError}=await supabaseClient
+    const {data:pendingProduct,error:pendingError}=await supabaseClient
       .from("products")
       .update({status:"pending"})
       .eq("id",productId)
-      .eq("status","draft");
+      .eq("status","draft")
+      .select("id")
+      .maybeSingle();
 
     if(pendingError)throw pendingError;
+    if(!pendingProduct)throw new Error("Beat records were created, but the product could not be moved to pending approval.");
 
     document.getElementById("beatForm").reset();
 
@@ -1548,7 +1420,6 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     await loadProducts();
 
   }catch(error){
-
     if(!productCreated){
       await removeUploadedFiles(PREVIEW_BUCKET,previewPaths);
       await removeUploadedFiles(DOWNLOAD_BUCKET,downloadPaths);
@@ -1557,13 +1428,12 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     let message="Beat upload was not completed.\n\n"+error.message;
 
     if(productCreated){
-      message+="\n\nIMPORTANT: A product record was created, but a later database step failed. It should remain a DRAFT. Check Product Management before retrying.\n\nProduct ID: "+productId;
+      message+="\n\nIMPORTANT: A product record was created, but a later database step failed. Check Product Management before retrying.\n\nProduct ID: "+productId;
     }else{
       message+="\n\nNo product record was created. Uploaded files were scheduled for cleanup.";
     }
 
     showStatus("uploadStatus",message,"error");
-
     await loadProducts();
 
   }finally{
@@ -1574,7 +1444,6 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
 /* PRODUCT MANAGEMENT */
 async function loadProducts(){
   const list=document.getElementById("productList");
-
   list.innerHTML='<div class="empty-state">Loading products...</div>';
 
   if(!adminVerified){
@@ -1584,7 +1453,7 @@ async function loadProducts(){
 
   const {data,error}=await supabaseClient
     .from("products")
-    .select("id,title,description,product_type,status,price_kobo,currency,created_at,producer_id,download_file_path,category_id")
+    .select("id,title,description,product_type,status,price_kobo,currency,created_at,producer_id,download_file_path,cover_image_path,preview_audio_path,category_id")
     .order("created_at",{ascending:false})
     .limit(200);
 
@@ -1594,7 +1463,6 @@ async function loadProducts(){
   }
 
   allProducts=data||[];
-
   updateDashboardCounts();
   renderProducts();
 }
@@ -1634,7 +1502,6 @@ function renderProducts(){
 
     const meta=document.createElement("div");
     meta.className="product-meta";
-
     meta.textContent=
       (product.product_type==="beat"?"Beat / Instrumental":"Digital Product")+
       " · "+formatMoney(product.price_kobo)+
@@ -1652,7 +1519,6 @@ function renderProducts(){
     reviewButton.addEventListener("click",()=>toggleReview(product.id,card,reviewButton));
 
     actions.appendChild(reviewButton);
-
     top.append(info,actions);
 
     const details=document.createElement("div");
@@ -1668,10 +1534,8 @@ function renderProducts(){
 document.querySelectorAll(".filter-button").forEach(button=>{
   button.addEventListener("click",()=>{
     document.querySelectorAll(".filter-button").forEach(item=>item.classList.remove("active"));
-
     button.classList.add("active");
     activeFilter=button.dataset.filter;
-
     renderProducts();
   });
 });
@@ -1701,36 +1565,21 @@ function expectedFileRole(type){
   })[type]||null;
 }
 
-/*
-Approval validation:
-- Digital product: its private download object must be accessible.
-- Beat: metadata, active licence records, the correct file role,
-  and an accessible private object are required for every active licence.
-*/
+/* APPROVAL VALIDATION */
 async function inspectProductForApproval(product){
 
   if(product.product_type!=="beat"){
-
     if(!product.download_file_path){
-      return{
-        ok:false,
-        reason:"The private digital download path is missing."
-      };
+      return{ok:false,reason:"The private digital download path is missing."};
     }
 
     const exists=await verifyPrivateObject(DOWNLOAD_BUCKET,product.download_file_path);
 
     if(!exists){
-      return{
-        ok:false,
-        reason:"The private digital download file could not be verified in storage."
-      };
+      return{ok:false,reason:"The private digital download file could not be verified in storage."};
     }
 
-    return{
-      ok:true,
-      reason:"The private digital download file is present and accessible."
-    };
+    return{ok:true,reason:"The private digital download file is present and accessible."};
   }
 
   const {data:beat,error:beatError}=await supabaseClient
@@ -1739,16 +1588,8 @@ async function inspectProductForApproval(product){
     .eq("product_id",product.id)
     .maybeSingle();
 
-  if(beatError){
-    throw new Error("Could not load beat metadata: "+beatError.message);
-  }
-
-  if(!beat){
-    return{
-      ok:false,
-      reason:"Beat metadata is missing."
-    };
-  }
+  if(beatError)throw new Error("Could not load beat metadata: "+beatError.message);
+  if(!beat)return{ok:false,reason:"Beat metadata is missing."};
 
   const {data:licences,error:licenceError}=await supabaseClient
     .from("product_licenses")
@@ -1756,26 +1597,14 @@ async function inspectProductForApproval(product){
     .eq("product_id",product.id)
     .eq("is_active",true);
 
-  if(licenceError){
-    throw new Error("Could not load licences: "+licenceError.message);
-  }
-
-  if(!licences?.length){
-    return{
-      ok:false,
-      reason:"No active beat licences were found."
-    };
-  }
+  if(licenceError)throw new Error("Could not load licences: "+licenceError.message);
+  if(!licences?.length)return{ok:false,reason:"No active beat licences were found."};
 
   for(const licence of licences){
-
     const requiredRole=expectedFileRole(licence.license_type);
 
     if(!requiredRole){
-      return{
-        ok:false,
-        reason:"An unsupported licence type was found: "+licence.license_type
-      };
+      return{ok:false,reason:"An unsupported licence type was found: "+licence.license_type};
     }
 
     const {data:files,error:fileError}=await supabaseClient
@@ -1783,13 +1612,9 @@ async function inspectProductForApproval(product){
       .select("id,file_role,file_format,file_path")
       .eq("license_id",licence.id);
 
-    if(fileError){
-      throw new Error("Could not check licence files: "+fileError.message);
-    }
+    if(fileError)throw new Error("Could not check licence files: "+fileError.message);
 
-    const requiredFile=(files||[]).find(file=>
-      file.file_role===requiredRole&&!!file.file_path
-    );
+    const requiredFile=(files||[]).find(file=>file.file_role===requiredRole&&!!file.file_path);
 
     if(!requiredFile){
       return{
@@ -1808,10 +1633,7 @@ async function inspectProductForApproval(product){
     }
   }
 
-  return{
-    ok:true,
-    reason:"Beat metadata, active licences and required private files passed verification."
-  };
+  return{ok:true,reason:"Beat metadata, active licences and required private files passed verification."};
 }
 
 /* REVIEW PANEL */
@@ -1826,7 +1648,6 @@ async function toggleReview(productId,card,button){
 
   panel.classList.add("open");
   button.textContent="Hide Details";
-
   panel.innerHTML='<div class="hint">Loading product information and checking private files...</div>';
 
   const product=allProducts.find(item=>item.id===productId);
@@ -1837,36 +1658,28 @@ async function toggleReview(productId,card,button){
   }
 
   try{
-
     let html='<div class="detail-grid">';
-
     html+=detailItem("Description",product.description||"No description provided");
     html+=detailItem("Product type",product.product_type||"Not specified");
     html+=detailItem("Status",product.status||"Unknown");
     html+=detailItem("Listed price",formatMoney(product.price_kobo));
-
     html+='</div>';
 
     if(product.product_type==="beat"){
-
       const {data:beat,error:beatError}=await supabaseClient
         .from("beat_details")
         .select("bpm,musical_key,genre,mood")
         .eq("product_id",productId)
         .maybeSingle();
 
-      if(beatError){
-        throw new Error("Could not load beat details: "+beatError.message);
-      }
+      if(beatError)throw new Error("Could not load beat details: "+beatError.message);
 
       html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Beat Information</h3>';
       html+='<div class="detail-grid">';
-
       html+=detailItem("BPM",beat?.bpm??"Not provided");
       html+=detailItem("Musical key",beat?.musical_key||"Not provided");
       html+=detailItem("Genre",beat?.genre||"Not provided");
       html+=detailItem("Mood",beat?.mood||"Not provided");
-
       html+='</div>';
 
       const {data:licences,error:licenceError}=await supabaseClient
@@ -1875,9 +1688,7 @@ async function toggleReview(productId,card,button){
         .eq("product_id",productId)
         .order("price_kobo");
 
-      if(licenceError){
-        throw new Error("Could not load beat licences: "+licenceError.message);
-      }
+      if(licenceError)throw new Error("Could not load beat licences: "+licenceError.message);
 
       html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Available Licences</h3>';
 
@@ -1886,20 +1697,15 @@ async function toggleReview(productId,card,button){
       }
 
       for(const licence of licences||[]){
-
         const {data:files,error:fileError}=await supabaseClient
           .from("product_license_files")
           .select("file_role,file_format,file_path")
           .eq("license_id",licence.id);
 
-        if(fileError){
-          throw new Error("Could not inspect licence files: "+fileError.message);
-        }
+        if(fileError)throw new Error("Could not inspect licence files: "+fileError.message);
 
-        const fileList=files||[];
-
-        const fileSummary=fileList.length
-          ?fileList.map(file=>escapeHTML(file.file_role)+" ("+escapeHTML(file.file_format)+")").join(", ")
+        const fileSummary=(files||[]).length
+          ?files.map(file=>escapeHTML(file.file_role)+" ("+escapeHTML(file.file_format)+")").join(", ")
           :"No file records found";
 
         html+='<div class="license-review">';
@@ -1911,100 +1717,97 @@ async function toggleReview(productId,card,button){
       }
 
     }else{
-
       html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Digital Download</h3>';
 
       if(product.download_file_path){
-
         const exists=await verifyPrivateObject(DOWNLOAD_BUCKET,product.download_file_path);
 
         html+=exists
           ?'<div class="review-success">The private download file exists and is accessible to the administrator. Its path remains hidden.</div>'
           :'<div class="review-warning">A download path is recorded, but the private file could not be verified in storage.</div>';
-
       }else{
-
         html+='<div class="review-warning">No private download file is recorded. This product cannot be approved.</div>';
       }
     }
 
     if(product.status==="pending"){
-
       const validation=await inspectProductForApproval(product);
 
       html+=validation.ok
         ?'<div class="review-success">Approval checks passed. '+escapeHTML(validation.reason)+'</div>'
         :'<div class="review-warning">Approval blocked: '+escapeHTML(validation.reason)+'</div>';
+    }else if(product.status==="approved"){
+      html+='<div class="review-success">This product is approved and eligible to appear in the public storefront.</div>';
+    }else if(product.status==="draft"){
+      html+='<div class="review-warning">This product is currently a draft and is not visible in the public storefront.</div>';
+    }
 
-      html+='<div class="product-actions" id="reviewActions"></div>';
+    html+='<div class="product-actions" id="reviewActions"></div>';
+    panel.innerHTML=html;
 
-      panel.innerHTML=html;
+    const actions=panel.querySelector("#reviewActions");
 
-      const actions=panel.querySelector("#reviewActions");
+    if(product.status==="pending"){
+      const validation=await inspectProductForApproval(product);
 
       const approve=document.createElement("button");
       approve.className="btn btn-success";
       approve.textContent="Approve & Publish";
       approve.disabled=!validation.ok;
       approve.addEventListener("click",()=>changeProductStatus(product,"approved",approve));
+      actions.appendChild(approve);
 
       const draft=document.createElement("button");
-      draft.className="btn btn-danger";
+      draft.className="btn btn-secondary";
       draft.textContent="Return to Draft";
       draft.addEventListener("click",()=>changeProductStatus(product,"draft",draft));
-
-      actions.append(approve,draft);
-
-      return;
+      actions.appendChild(draft);
     }
 
     if(product.status==="approved"){
-      html+='<div class="review-success">This product is approved and eligible to appear in the public storefront.</div>';
-    }else if(product.status==="draft"){
-      html+='<div class="review-warning">This product is currently a draft and is not visible in the public storefront.</div>';
+      const unapprove=document.createElement("button");
+      unapprove.className="btn btn-secondary";
+      unapprove.textContent="Unapprove & Return to Draft";
+      unapprove.addEventListener("click",()=>changeProductStatus(product,"draft",unapprove));
+      actions.appendChild(unapprove);
     }
 
-    panel.innerHTML=html;
+    const deleteButton=document.createElement("button");
+    deleteButton.className="btn btn-danger";
+    deleteButton.textContent="Delete Product";
+    deleteButton.addEventListener("click",()=>deleteProduct(product,deleteButton));
+    actions.appendChild(deleteButton);
 
   }catch(error){
-
     panel.innerHTML='<div class="review-warning">Unable to complete the review: '+escapeHTML(error.message)+'</div>';
   }
 }
 
-/* APPROVE / RETURN TO DRAFT */
+/* APPROVE / UNAPPROVE */
 async function changeProductStatus(product,newStatus,button){
-
   if(!adminVerified||!currentUser){
     alert("Administrator access is required.");
     return;
   }
 
   if(actionInProgress)return;
-
   if(!["approved","draft"].includes(newStatus))return;
 
   const actionText=newStatus==="approved"?"approve and publish":"return to draft";
 
-  const confirmation=confirm(
+  if(!confirm(
     'Are you sure you want to '+actionText+' "'+product.title+'"?\n\n'+
     (newStatus==="approved"
       ?"The product will become eligible to appear in the public storefront."
       :"The product will be removed from the public storefront.")
-  );
-
-  if(!confirmation)return;
+  ))return;
 
   actionInProgress=true;
-
   const oldText=button.textContent;
-
   button.disabled=true;
   button.textContent="Updating...";
 
   try{
-
-    /* Re-read the record to prevent acting on stale dashboard data. */
     const {data:current,error:readError}=await supabaseClient
       .from("products")
       .select("id,status,product_type,download_file_path")
@@ -2013,33 +1816,29 @@ async function changeProductStatus(product,newStatus,button){
 
     if(readError)throw readError;
 
-    if(current.status!=="pending"){
-      throw new Error("This product is no longer pending. Refresh and review its current status.");
+    const allowedSourceStatuses=newStatus==="approved"
+      ?["pending"]
+      :["pending","approved"];
+
+    if(!allowedSourceStatuses.includes(current.status)){
+      throw new Error("This product's status has changed. Refresh and review its current status.");
     }
 
-    /* Run all approval checks again immediately before publishing. */
     if(newStatus==="approved"){
-
       const validation=await inspectProductForApproval(current);
-
-      if(!validation.ok){
-        throw new Error(validation.reason);
-      }
+      if(!validation.ok)throw new Error(validation.reason);
     }
 
     const {data:updated,error:updateError}=await supabaseClient
       .from("products")
       .update({status:newStatus})
       .eq("id",product.id)
-      .eq("status","pending")
+      .eq("status",current.status)
       .select("id,status")
       .maybeSingle();
 
     if(updateError)throw updateError;
-
-    if(!updated){
-      throw new Error("No product was updated. It may have changed status. Refresh and try again.");
-    }
+    if(!updated)throw new Error("No product was updated. It may have changed status. Refresh and try again.");
 
     showStatus(
       "uploadStatus",
@@ -2052,19 +1851,200 @@ async function changeProductStatus(product,newStatus,button){
     await loadProducts();
 
   }catch(error){
-
     showStatus("uploadStatus","Product status was not changed.\n\n"+error.message,"error");
-
     button.disabled=false;
     button.textContent=oldText;
-
   }finally{
-
     actionInProgress=false;
   }
 }
 
-/* START */
+/* PERMANENT PRODUCT DELETION */
+async function deleteProduct(product,button){
+
+  if(!adminVerified||!currentUser){
+    alert("Administrator access is required.");
+    return;
+  }
+
+  if(actionInProgress)return;
+
+  const firstConfirmation=confirm(
+    "PERMANENT PRODUCT DELETION\n\n"+
+    'You are about to permanently delete:\n\n"'+product.title+'"\n\n'+
+    "This will remove its product record, beat metadata, licence records and associated uploaded files.\n\n"+
+    "This action cannot be undone.\n\nContinue?"
+  );
+
+  if(!firstConfirmation)return;
+
+  const typedConfirmation=prompt(
+    'To permanently delete "'+product.title+'", type DELETE below.\n\nThis action cannot be undone.'
+  );
+
+  if(typedConfirmation!=="DELETE"){
+    alert("Deletion cancelled. The confirmation text did not match.");
+    return;
+  }
+
+  actionInProgress=true;
+
+  const originalText=button.textContent;
+  button.disabled=true;
+  button.textContent="Deleting...";
+
+  try{
+
+    /* Verify the product still exists and retrieve its latest paths. */
+    const {data:current,error:productReadError}=await supabaseClient
+      .from("products")
+      .select("id,title,status,product_type,download_file_path,cover_image_path,preview_audio_path")
+      .eq("id",product.id)
+      .single();
+
+    if(productReadError)throw new Error("Could not retrieve product before deletion: "+productReadError.message);
+
+    /* Collect licence IDs and their associated file paths. */
+    const {data:licences,error:licenceReadError}=await supabaseClient
+      .from("product_licenses")
+      .select("id")
+      .eq("product_id",product.id);
+
+    if(licenceReadError){
+      throw new Error("Could not retrieve product licences: "+licenceReadError.message);
+    }
+
+    const licenceIds=(licences||[]).map(item=>item.id);
+    let licenceFilePaths=[];
+
+    if(licenceIds.length){
+      const {data:files,error:filesReadError}=await supabaseClient
+        .from("product_license_files")
+        .select("id,license_id,file_path")
+        .in("license_id",licenceIds);
+
+      if(filesReadError){
+        throw new Error("Could not retrieve licence file records: "+filesReadError.message);
+      }
+
+      licenceFilePaths=(files||[]).map(file=>file.file_path).filter(Boolean);
+
+      /* Delete licence-file database records first. */
+      const {error:fileDeleteError}=await supabaseClient
+        .from("product_license_files")
+        .delete()
+        .in("license_id",licenceIds);
+
+      if(fileDeleteError){
+        throw new Error("Could not delete licence file records: "+fileDeleteError.message);
+      }
+
+      /* Delete the licence records next. */
+      const {error:licenceDeleteError}=await supabaseClient
+        .from("product_licenses")
+        .delete()
+        .in("id",licenceIds);
+
+      if(licenceDeleteError){
+        throw new Error("Could not delete product licences: "+licenceDeleteError.message);
+      }
+    }
+
+    /* Remove beat metadata if this is a beat product. */
+    if(current.product_type==="beat"){
+      const {error:beatDeleteError}=await supabaseClient
+        .from("beat_details")
+        .delete()
+        .eq("product_id",product.id);
+
+      if(beatDeleteError){
+        throw new Error("Could not delete beat metadata: "+beatDeleteError.message);
+      }
+    }
+
+    /* Finally delete the main product record. */
+    const {data:deletedProduct,error:productDeleteError}=await supabaseClient
+      .from("products")
+      .delete()
+      .eq("id",product.id)
+      .select("id")
+      .maybeSingle();
+
+    if(productDeleteError){
+      throw new Error("Could not delete the product record: "+productDeleteError.message);
+    }
+
+    if(!deletedProduct){
+      throw new Error("The product record was not deleted. Check database permissions and product relationships.");
+    }
+
+    /*
+      Database records have now been removed.
+      Remove associated private storage objects afterwards.
+    */
+    const downloadPaths=[
+      current.download_file_path,
+      ...licenceFilePaths
+    ].filter(Boolean);
+
+    const previewPaths=[
+      current.cover_image_path,
+      current.preview_audio_path
+    ].filter(Boolean);
+
+    let storageErrors=[];
+
+    if(downloadPaths.length){
+      const {error}=await supabaseClient.storage
+        .from(DOWNLOAD_BUCKET)
+        .remove([...new Set(downloadPaths)]);
+
+      if(error)storageErrors.push("Download storage: "+error.message);
+    }
+
+    if(previewPaths.length){
+      const {error}=await supabaseClient.storage
+        .from(PREVIEW_BUCKET)
+        .remove([...new Set(previewPaths)]);
+
+      if(error)storageErrors.push("Preview storage: "+error.message);
+    }
+
+    if(storageErrors.length){
+      showStatus(
+        "uploadStatus",
+        "The product database record and related licence records were deleted successfully.\n\n"+
+        "WARNING: Some uploaded files could not be removed from Storage. They may remain as orphaned files.\n\n"+
+        storageErrors.join("\n"),
+        "error"
+      );
+    }else{
+      showStatus(
+        "uploadStatus",
+        'Product "'+current.title+'" and its associated licence records and uploaded files were permanently deleted.',
+        "success"
+      );
+    }
+
+    await loadProducts();
+
+  }catch(error){
+    showStatus(
+      "uploadStatus",
+      "Product deletion did not complete successfully.\n\n"+error.message+
+      "\n\nSome earlier database operations may already have succeeded. Refresh Product Management and inspect the product before retrying.",
+      "error"
+    );
+
+    button.disabled=false;
+    button.textContent=originalText;
+
+  }finally{
+    actionInProgress=false;
+  }
+}
+
+/* START APPLICATION */
 initialise();
 </script>
 

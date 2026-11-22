@@ -3,117 +3,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#faf9f6">
-<meta name="description" content="485 MUSIC Upload Studio — manage digital music products, beats and licences.">
-<title>485 MUSIC | Upload Studio</title>
+<meta name="theme-color" content="#090909">
+<meta name="description" content="485 Upload Studio — manage digital music products, beats and licences.">
+<title>485 Upload Studio</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --gold:#b79554;--gold-light:#e7d6ae;--ink:#292822;
-  --muted:#77766f;--paper:#faf9f6;--white:#fff;
-  --line:#e9e5dc;--green:#287b50;--red:#b53c3c;
-  --blue:#426b91;--shadow:0 12px 40px rgba(45,38,22,.06)
+  --gold:#c6a15b;
+  --gold-light:#ead5a4;
+  --gold-dark:#98733b;
+  --ink:#f4f0e7;
+  --muted:#a09b91;
+  --paper:#090909;
+  --white:#151515;
+  --panel:#111111;
+  --panel-light:#191919;
+  --line:#302b22;
+  --green:#65bd87;
+  --red:#e17870;
+  --blue:#8baed0;
+  --amber:#dfb76d;
+  --shadow:0 15px 45px rgba(0,0,0,.35);
 }
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Arial,sans-serif}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse at top,rgba(198,161,91,.055),transparent 45%),
+    var(--paper);
+  color:var(--ink);
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh;
+}
+
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-header{background:#fff;border-bottom:1px solid var(--line);padding:19px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.brand{font-size:21px;font-weight:800;letter-spacing:2px}
+
+header{
+  background:rgba(12,12,12,.96);
+  border-bottom:1px solid var(--line);
+  padding:20px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:relative;
+}
+
+header:after{
+  content:"";
+  position:absolute;
+  bottom:-1px;
+  left:5%;
+  width:110px;
+  height:1px;
+  background:var(--gold);
+}
+
+.brand{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:3px;
+  color:#fff;
+}
+
 .brand span{color:var(--gold)}
-.header-label{color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase}
-.container{width:min(1100px,92%);margin:35px auto 70px}
-h1{font-size:clamp(25px,4vw,36px);margin:0 0 8px}
-.subtitle{color:var(--muted);margin:0 0 28px;line-height:1.6}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:25px;margin-bottom:22px;box-shadow:var(--shadow)}
-.card h2{font-size:18px;margin:0 0 20px}
-label{display:block;font-size:13px;font-weight:650;margin:15px 0 7px}
-input,textarea,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(183,149,84,.12)}
-textarea{min-height:105px;resize:vertical}
-small,.hint{color:var(--muted);font-size:12px;line-height:1.5}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+
+.header-label{
+  color:var(--gold-light);
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.container{
+  width:min(1100px,92%);
+  margin:40px auto 70px;
+}
+
+h1{
+  font-size:clamp(26px,4vw,38px);
+  margin:0 0 8px;
+  color:#fff;
+  letter-spacing:-.7px;
+}
+
+h2{
+  color:var(--gold-light);
+}
+
+.subtitle{
+  color:var(--muted);
+  margin:0 0 28px;
+  line-height:1.7;
+}
+
+.card{
+  background:linear-gradient(145deg,#151515,#101010);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:25px;
+  margin-bottom:22px;
+  box-shadow:var(--shadow);
+}
+
+.card h2{
+  font-size:17px;
+  margin:0 0 20px;
+  letter-spacing:.2px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:650;
+  margin:15px 0 7px;
+  color:#ddd7cb;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:13px;
+  border:1px solid #39352d;
+  border-radius:7px;
+  background:#090909;
+  color:#f5f0e6;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+
+input::placeholder,textarea::placeholder{
+  color:#77736b;
+}
+
+input:focus,textarea:focus,select:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(198,161,91,.13);
+}
+
+input[type="file"]{
+  padding:10px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+input[type="file"]::file-selector-button{
+  background:#292319;
+  color:var(--gold-light);
+  border:1px solid #695332;
+  padding:8px 12px;
+  border-radius:5px;
+  margin-right:12px;
+  cursor:pointer;
+}
+
+input[type="checkbox"],input[type="radio"]{
+  accent-color:var(--gold);
+}
+
+select option{
+  background:#111;
+  color:#fff;
+}
+
+textarea{
+  min-height:105px;
+  resize:vertical;
+}
+
+small,.hint{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0 18px;
+}
+
 .full{grid-column:1/-1}
-.mode-switch{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-.mode-option{border:1px solid var(--line);border-radius:9px;padding:13px 18px;flex:1;min-width:150px;cursor:pointer;background:#fff}
-.mode-option:has(input:checked){border-color:var(--gold);background:#fbf8f0}
-.mode-option input{width:auto;margin-right:8px}
-.btn{border:0;border-radius:8px;padding:12px 17px;font-weight:700;transition:.2s}
-.btn-primary{background:var(--gold);color:#fff}
-.btn-primary:hover{background:#9d793e}
-.btn-secondary{background:#f1eee7;color:var(--ink)}
-.btn-danger{background:#fff0ef;color:var(--red)}
-.btn-success{background:#eaf6ee;color:var(--green)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.submit-row,.product-actions{margin-top:15px;display:flex;flex-wrap:wrap;gap:10px}
-.status{display:none;padding:14px;border-radius:9px;margin:15px 0;font-size:13px;line-height:1.6;white-space:pre-wrap}
-.status.success{display:block;background:#edf8f1;color:var(--green)}
-.status.error{display:block;background:#fff0ef;color:var(--red)}
-.status.info{display:block;background:#f8f4e9;color:#80652f}
-.license-card{border:1px solid var(--line);border-radius:10px;padding:17px;margin:13px 0}
-.license-heading{display:flex;align-items:center;gap:10px;font-weight:750}
-.license-heading input{width:auto;margin:0}
-.license-heading label{margin:0}
-.license-fields{display:none;margin-top:12px}
+
+.mode-switch{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:5px;
+}
+
+.mode-option{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:14px 18px;
+  flex:1;
+  min-width:150px;
+  cursor:pointer;
+  background:#101010;
+  color:#d5cfc3;
+  transition:.2s;
+}
+
+.mode-option:has(input:checked){
+  border-color:var(--gold);
+  background:#211b10;
+  color:var(--gold-light);
+  box-shadow:inset 0 0 0 1px rgba(198,161,91,.12);
+}
+
+.mode-option input{
+  width:auto;
+  margin-right:8px;
+}
+
+.btn{
+  border:1px solid transparent;
+  border-radius:7px;
+  padding:12px 18px;
+  font-weight:750;
+  font-size:13px;
+  transition:.2s;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,#e0c17f,#b58c49);
+  color:#100e09;
+  border-color:#e3c88f;
+}
+
+.btn-primary:hover{
+  background:linear-gradient(135deg,#f0d79d,#c39b57);
+  transform:translateY(-1px);
+}
+
+.btn-secondary{
+  background:#22201b;
+  color:var(--gold-light);
+  border-color:#51432c;
+}
+
+.btn-secondary:hover{
+  background:#30291d;
+  border-color:var(--gold);
+}
+
+.btn-danger{
+  background:#2b1716;
+  color:#f08e86;
+  border-color:#63312e;
+}
+
+.btn-success{
+  background:#14271c;
+  color:#79d49a;
+  border-color:#315c40;
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.submit-row,.product-actions{
+  margin-top:17px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.status{
+  display:none;
+  padding:14px;
+  border-radius:8px;
+  margin:15px 0;
+  font-size:13px;
+  line-height:1.7;
+  white-space:pre-wrap;
+  border:1px solid transparent;
+}
+
+.status.success{
+  display:block;
+  background:#122219;
+  border-color:#31583d;
+  color:#8cdaa6;
+}
+
+.status.error{
+  display:block;
+  background:#281514;
+  border-color:#63312e;
+  color:#f08e86;
+}
+
+.status.info{
+  display:block;
+  background:#251e12;
+  border-color:#67502d;
+  color:#e5c681;
+}
+
+.license-card{
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:17px;
+  margin:13px 0;
+  background:#101010;
+}
+
+.license-heading{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:750;
+  color:var(--gold-light);
+}
+
+.license-heading input{
+  width:auto;
+  margin:0;
+}
+
+.license-heading label{
+  margin:0;
+  color:var(--gold-light);
+}
+
+.license-fields{
+  display:none;
+  margin-top:12px;
+}
+
 .license-fields.active{display:block}
+
 .license-fields label{margin-top:12px}
-.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;background:#f2eee5;color:#80652f;margin:5px 5px 0 0}
-.badge.approved{background:#eaf6ee;color:var(--green)}
-.badge.pending{background:#fff5df;color:#936a28}
-.badge.draft{background:#edf1f5;color:#426b91}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  letter-spacing:.5px;
+  background:#302719;
+  color:var(--gold-light);
+  margin:5px 5px 0 0;
+  font-weight:750;
+}
+
+.badge.approved{
+  background:#14271c;
+  color:#79d49a;
+}
+
+.badge.pending{
+  background:#302513;
+  color:#e5bd71;
+}
+
+.badge.draft{
+  background:#18232d;
+  color:#9bbbd8;
+}
+
+.badge.unknown{
+  background:#282828;
+  color:#aaa;
+}
+
 .hidden{display:none!important}
+
 #app{display:none}
-footer{text-align:center;padding:25px;color:var(--muted);font-size:12px}
-.dashboard-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
-.stat-box{border:1px solid var(--line);border-radius:10px;padding:15px;background:#fff}
-.stat-number{font-size:25px;font-weight:800;color:var(--gold)}
-.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
-.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-.filter-button{border:1px solid var(--line);background:#fff;border-radius:30px;padding:9px 15px;font-size:12px;font-weight:700;color:var(--muted)}
-.filter-button.active{background:#fbf8f0;border-color:var(--gold);color:#80652f}
-.product-card{border:1px solid var(--line);border-radius:12px;padding:18px;margin:13px 0;background:#fff}
-.product-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}
-.product-title{font-weight:800;font-size:16px;margin-bottom:5px}
-.product-meta{font-size:12px;color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
-.product-details{display:none;border-top:1px solid var(--line);margin-top:15px;padding-top:15px}
+
+footer{
+  text-align:center;
+  padding:28px 15px;
+  color:#77736b;
+  font-size:11px;
+  line-height:1.9;
+  border-top:1px solid var(--line);
+  letter-spacing:.5px;
+}
+
+.dashboard-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:20px 0 0;
+}
+
+.stat-box{
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:17px;
+  background:#0d0d0d;
+  position:relative;
+  overflow:hidden;
+}
+
+.stat-box:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:35px;
+  height:2px;
+  background:var(--gold);
+}
+
+.stat-number{
+  font-size:27px;
+  font-weight:850;
+  color:var(--gold);
+}
+
+.stat-label{
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  margin-top:5px;
+}
+
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:20px 0;
+}
+
+.filter-button{
+  border:1px solid #39352d;
+  background:#111;
+  border-radius:30px;
+  padding:9px 15px;
+  font-size:11px;
+  font-weight:750;
+  color:#aaa49a;
+  transition:.2s;
+}
+
+.filter-button:hover{
+  border-color:var(--gold);
+  color:var(--gold-light);
+}
+
+.filter-button.active{
+  background:#292113;
+  border-color:var(--gold);
+  color:var(--gold-light);
+}
+
+.product-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:18px;
+  margin:13px 0;
+  background:#101010;
+}
+
+.product-card:hover{
+  border-color:#625034;
+}
+
+.product-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.product-title{
+  font-weight:800;
+  font-size:16px;
+  margin-bottom:6px;
+  color:#fff;
+}
+
+.product-meta{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.8;
+  overflow-wrap:anywhere;
+}
+
+.product-details{
+  display:none;
+  border-top:1px solid var(--line);
+  margin-top:15px;
+  padding-top:15px;
+}
+
 .product-details.open{display:block}
-.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
-.detail-item{background:#faf9f6;padding:11px;border-radius:8px;min-width:0}
-.detail-item strong{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
-.detail-item span{font-size:13px;overflow-wrap:anywhere;white-space:pre-wrap}
-.license-review{border:1px solid var(--line);border-radius:9px;padding:13px;margin:10px 0}
-.review-warning{background:#fff5df;color:#80652f;border-radius:8px;padding:12px;font-size:12px;line-height:1.6;margin-top:12px}
-.review-success{background:#edf8f1;color:var(--green);border-radius:8px;padding:12px;font-size:12px;line-height:1.6;margin-top:12px}
-.empty-state{text-align:center;padding:28px 12px;color:var(--muted);font-size:13px}
-hr{border:0;border-top:1px solid var(--line);margin:25px 0}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin:12px 0;
+}
+
+.detail-item{
+  background:#191919;
+  border:1px solid #292929;
+  padding:12px;
+  border-radius:7px;
+  min-width:0;
+}
+
+.detail-item strong{
+  display:block;
+  font-size:10px;
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  margin-bottom:6px;
+}
+
+.detail-item span{
+  font-size:13px;
+  color:#e2ddd3;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.license-review{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:13px;
+  margin:10px 0;
+  background:#151515;
+}
+
+.license-review strong{color:var(--gold-light)}
+
+.review-warning{
+  background:#2b2112;
+  color:#e7c77f;
+  border:1px solid #604a27;
+  border-radius:8px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.7;
+  margin-top:12px;
+}
+
+.review-success{
+  background:#14251a;
+  color:#85d29c;
+  border:1px solid #31583d;
+  border-radius:8px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.7;
+  margin-top:12px;
+}
+
+.empty-state{
+  text-align:center;
+  padding:30px 12px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+hr{
+  border:0;
+  border-top:1px solid var(--line);
+  margin:25px 0;
+}
+
+#managementCard>div:first-child strong{
+  color:var(--gold-light);
+}
+
 @media(max-width:650px){
- .grid,.detail-grid{grid-template-columns:1fr}
- .full{grid-column:auto}
- .card{padding:18px}
- header{padding:16px 4%}
- .dashboard-stats{grid-template-columns:1fr 1fr}
- .product-top{flex-direction:column}
+  .grid,.detail-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .card{padding:18px}
+  header{padding:17px 4%}
+  .brand{font-size:19px}
+  .header-label{font-size:9px;letter-spacing:2px}
+  .dashboard-stats{grid-template-columns:1fr 1fr}
+  .product-top{flex-direction:column}
+  .product-actions{width:100%}
+  .product-actions .btn{flex:1}
+  .submit-row .btn{width:100%}
+}
+
+@media(max-width:380px){
+  .dashboard-stats{grid-template-columns:1fr}
+  .mode-option{min-width:100%}
 }
 </style>
 </head>
 
 <body>
+
 <header>
-  <div class="brand">485 <span>MUSIC</span></div>
-  <div class="header-label">Upload Studio</div>
+  <div class="brand">485 <span>UPLOAD STUDIO</span></div>
+  <div class="header-label">Administrator Portal</div>
 </header>
 
 <main class="container">
+
 <section id="loginSection" class="card">
   <h1>Studio Login</h1>
-  <p class="subtitle">Sign in with your authorised 485 MUSIC administrator account.</p>
+  <p class="subtitle">Sign in with your authorised 485 administrator account.</p>
+
   <div id="loginStatus" class="status"></div>
+
   <form id="loginForm">
     <label for="email">Email address</label>
     <input id="email" type="email" autocomplete="username" required>
+
     <label for="password">Password</label>
     <input id="password" type="password" autocomplete="current-password" required>
+
     <div class="submit-row">
       <button class="btn btn-primary" type="submit" id="loginButton">Sign In</button>
     </div>
@@ -121,8 +633,9 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 </section>
 
 <section id="app">
-  <h1>Upload Studio</h1>
-  <p class="subtitle">Manage products, beats, instrumentals, licences and marketplace approvals.</p>
+
+  <h1>485 Upload Studio</h1>
+  <p class="subtitle">Manage digital products, beats, instrumentals, licences and marketplace approvals.</p>
 
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap">
@@ -132,10 +645,22 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
       </div>
       <button class="btn btn-secondary" id="logoutButton">Sign Out</button>
     </div>
+
     <div class="dashboard-stats">
-      <div class="stat-box"><div class="stat-number" id="pendingCount">0</div><div class="stat-label">Pending Review</div></div>
-      <div class="stat-box"><div class="stat-number" id="approvedCount">0</div><div class="stat-label">Approved</div></div>
-      <div class="stat-box"><div class="stat-number" id="draftCount">0</div><div class="stat-label">Drafts</div></div>
+      <div class="stat-box">
+        <div class="stat-number" id="pendingCount">0</div>
+        <div class="stat-label">Pending Review</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-number" id="approvedCount">0</div>
+        <div class="stat-label">Approved</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-number" id="draftCount">0</div>
+        <div class="stat-label">Drafts</div>
+      </div>
     </div>
   </div>
 
@@ -143,47 +668,65 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 
   <div class="card">
     <h2>01 — Select Product Type</h2>
+
     <div class="mode-switch">
-      <label class="mode-option"><input type="radio" name="productMode" value="digital_product" checked> Digital Product</label>
-      <label class="mode-option"><input type="radio" name="productMode" value="beat"> Beat / Instrumental</label>
+      <label class="mode-option">
+        <input type="radio" name="productMode" value="digital_product" checked>
+        Digital Product
+      </label>
+
+      <label class="mode-option">
+        <input type="radio" name="productMode" value="beat">
+        Beat / Instrumental
+      </label>
     </div>
   </div>
 
   <form id="digitalForm" class="card">
     <h2>02 — Digital Product Details</h2>
+
     <div class="grid">
       <div class="full">
         <label for="digitalTitle">Product title *</label>
         <input id="digitalTitle" maxlength="120" required placeholder="Example: LordMarshal Afro Sample Pack">
       </div>
+
       <div class="full">
         <label for="digitalDescription">Description *</label>
         <textarea id="digitalDescription" required placeholder="Describe the contents and benefits of this product."></textarea>
       </div>
+
       <div>
         <label for="digitalCategory">Category *</label>
-        <select id="digitalCategory" required><option value="">Loading categories...</option></select>
+        <select id="digitalCategory" required>
+          <option value="">Loading categories...</option>
+        </select>
       </div>
+
       <div>
         <label for="digitalPrice">Price (NGN) *</label>
         <input id="digitalPrice" type="number" min="1" step="1" required placeholder="Example: 5000">
       </div>
+
       <div>
         <label for="digitalCover">Product cover image</label>
         <input id="digitalCover" type="file" accept="image/jpeg,image/png,image/webp">
         <small>JPG, PNG or WebP.</small>
       </div>
+
       <div>
         <label for="digitalPreview">Audio preview</label>
         <input id="digitalPreview" type="file" accept="audio/mpeg,audio/wav,audio/mp3">
         <small>Optional preview audio.</small>
       </div>
+
       <div class="full">
         <label for="digitalDownload">Digital product file *</label>
         <input id="digitalDownload" type="file" accept=".zip,.rar,.7z,.wav,.mp3,.mid,.midi,.fst,.fxp,.pdf" required>
         <small>Private customer download file. Supported examples: ZIP, RAR, 7Z, WAV, MP3, MIDI and presets.</small>
       </div>
     </div>
+
     <div class="submit-row">
       <button class="btn btn-primary" type="submit" id="digitalSubmit">Upload Digital Product</button>
     </div>
@@ -191,19 +734,23 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 
   <form id="beatForm" class="card hidden">
     <h2>02 — Beat / Instrumental Details</h2>
+
     <div class="grid">
       <div class="full">
         <label for="beatTitle">Beat title *</label>
         <input id="beatTitle" maxlength="120" required placeholder="Enter your instrumental title">
       </div>
+
       <div class="full">
         <label for="beatDescription">Description *</label>
         <textarea id="beatDescription" required placeholder="Describe the instrumental and its sound."></textarea>
       </div>
+
       <div>
         <label for="beatBpm">BPM</label>
         <input id="beatBpm" type="number" min="1" max="300" placeholder="Example: 105">
       </div>
+
       <div>
         <label for="beatKey">Musical key</label>
         <select id="beatKey">
@@ -219,50 +766,98 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
           <option>B minor</option>
         </select>
       </div>
-      <div><label for="beatGenre">Genre</label><input id="beatGenre" placeholder="Example: Afrobeat, Trap, Hip-Hop"></div>
-      <div><label for="beatMood">Mood</label><input id="beatMood" placeholder="Example: Dark, Emotional, Energetic"></div>
-      <div><label for="beatCover">Beat cover image</label><input id="beatCover" type="file" accept="image/jpeg,image/png,image/webp"></div>
-      <div><label for="beatPreview">Audio preview</label><input id="beatPreview" type="file" accept="audio/mpeg,audio/wav,audio/mp3"></div>
+
+      <div>
+        <label for="beatGenre">Genre</label>
+        <input id="beatGenre" placeholder="Example: Afrobeat, Trap, Hip-Hop">
+      </div>
+
+      <div>
+        <label for="beatMood">Mood</label>
+        <input id="beatMood" placeholder="Example: Dark, Emotional, Energetic">
+      </div>
+
+      <div>
+        <label for="beatCover">Beat cover image</label>
+        <input id="beatCover" type="file" accept="image/jpeg,image/png,image/webp">
+      </div>
+
+      <div>
+        <label for="beatPreview">Audio preview</label>
+        <input id="beatPreview" type="file" accept="audio/mpeg,audio/wav,audio/mp3">
+      </div>
     </div>
 
     <hr>
+
     <h2>03 — Beat Licensing</h2>
     <p class="hint">Select the licences you want to sell. Each licence has its own price and private downloadable file.</p>
 
     <div class="license-card">
-      <div class="license-heading"><input type="checkbox" class="license-check" id="checkMp3"><label for="checkMp3">MP3 Lease</label></div>
+      <div class="license-heading">
+        <input type="checkbox" class="license-check" id="checkMp3">
+        <label for="checkMp3">MP3 Lease</label>
+      </div>
+
       <div class="license-fields" id="fieldsMp3">
-        <label for="priceMp3">Price (NGN) *</label><input id="priceMp3" type="number" min="1" step="1" placeholder="Example: 5000">
-        <label for="fileMp3">MP3 file *</label><input id="fileMp3" type="file" accept=".mp3,audio/mpeg">
+        <label for="priceMp3">Price (NGN) *</label>
+        <input id="priceMp3" type="number" min="1" step="1" placeholder="Example: 5000">
+
+        <label for="fileMp3">MP3 file *</label>
+        <input id="fileMp3" type="file" accept=".mp3,audio/mpeg">
       </div>
     </div>
 
     <div class="license-card">
-      <div class="license-heading"><input type="checkbox" class="license-check" id="checkWav"><label for="checkWav">WAV Lease</label></div>
+      <div class="license-heading">
+        <input type="checkbox" class="license-check" id="checkWav">
+        <label for="checkWav">WAV Lease</label>
+      </div>
+
       <div class="license-fields" id="fieldsWav">
-        <label for="priceWav">Price (NGN) *</label><input id="priceWav" type="number" min="1" step="1" placeholder="Example: 10000">
-        <label for="fileWav">WAV file *</label><input id="fileWav" type="file" accept=".wav,audio/wav">
+        <label for="priceWav">Price (NGN) *</label>
+        <input id="priceWav" type="number" min="1" step="1" placeholder="Example: 10000">
+
+        <label for="fileWav">WAV file *</label>
+        <input id="fileWav" type="file" accept=".wav,audio/wav">
       </div>
     </div>
 
     <div class="license-card">
-      <div class="license-heading"><input type="checkbox" class="license-check" id="checkTrackout"><label for="checkTrackout">Trackout Lease</label></div>
+      <div class="license-heading">
+        <input type="checkbox" class="license-check" id="checkTrackout">
+        <label for="checkTrackout">Trackout Lease</label>
+      </div>
+
       <div class="license-fields" id="fieldsTrackout">
-        <label for="priceTrackout">Price (NGN) *</label><input id="priceTrackout" type="number" min="1" step="1" placeholder="Example: 25000">
-        <label for="fileTrackout">Trackout ZIP file *</label><input id="fileTrackout" type="file" accept=".zip,.rar,.7z">
+        <label for="priceTrackout">Price (NGN) *</label>
+        <input id="priceTrackout" type="number" min="1" step="1" placeholder="Example: 25000">
+
+        <label for="fileTrackout">Trackout ZIP file *</label>
+        <input id="fileTrackout" type="file" accept=".zip,.rar,.7z">
       </div>
     </div>
 
     <div class="license-card">
-      <div class="license-heading"><input type="checkbox" class="license-check" id="checkExclusive"><label for="checkExclusive">Exclusive Rights</label></div>
+      <div class="license-heading">
+        <input type="checkbox" class="license-check" id="checkExclusive">
+        <label for="checkExclusive">Exclusive Rights</label>
+      </div>
+
       <div class="license-fields" id="fieldsExclusive">
-        <label for="priceExclusive">Price (NGN) *</label><input id="priceExclusive" type="number" min="1" step="1" placeholder="Example: 150000">
-        <label for="fileExclusive">Exclusive WAV file *</label><input id="fileExclusive" type="file" accept=".wav,audio/wav">
-        <label for="fileAgreement">Licence agreement (optional)</label><input id="fileAgreement" type="file" accept=".pdf,.doc,.docx">
+        <label for="priceExclusive">Price (NGN) *</label>
+        <input id="priceExclusive" type="number" min="1" step="1" placeholder="Example: 150000">
+
+        <label for="fileExclusive">Exclusive WAV file *</label>
+        <input id="fileExclusive" type="file" accept=".wav,audio/wav">
+
+        <label for="fileAgreement">Licence agreement (optional)</label>
+        <input id="fileAgreement" type="file" accept=".pdf,.doc,.docx">
       </div>
     </div>
 
     <div class="hint">Review your ownership and licensing terms before offering exclusive rights.</div>
+
     <div class="submit-row">
       <button class="btn btn-primary" type="submit" id="beatSubmit">Upload Beat & Licences</button>
     </div>
@@ -270,21 +865,34 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 
   <div class="card" id="managementCard">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div><h2 style="margin:0">04 — Product Management</h2><p class="hint" style="margin:6px 0 0">Review submissions and control what appears in the public marketplace.</p></div>
+      <div>
+        <h2 style="margin:0">04 — Product Management</h2>
+        <p class="hint" style="margin:6px 0 0">Review submissions and control what appears in the public marketplace.</p>
+      </div>
+
       <button class="btn btn-secondary" id="refreshProducts">Refresh</button>
     </div>
+
     <div class="filter-bar">
       <button class="filter-button active" data-filter="all">All Products</button>
       <button class="filter-button" data-filter="pending">Pending Review</button>
       <button class="filter-button" data-filter="approved">Approved</button>
       <button class="filter-button" data-filter="draft">Drafts</button>
     </div>
-    <div id="productList"><div class="empty-state">Loading products...</div></div>
+
+    <div id="productList">
+      <div class="empty-state">Loading products...</div>
+    </div>
   </div>
+
 </section>
 </main>
 
-<footer>485 MUSIC — Independent Sound Marketplace<br>Upload Studio Administration</footer>
+<footer>
+  <strong style="color:var(--gold-light);letter-spacing:2px">485 UPLOAD STUDIO</strong><br>
+  Independent Sound Marketplace<br>
+  Administrator Portal
+</footer>
 
 <script>
 "use strict";
@@ -313,42 +921,66 @@ function showStatus(id,message,type="info"){
   el.className="status "+type;
   el.textContent=message;
 }
+
 function clearStatus(id){
   const el=document.getElementById(id);
   el.className="status";
   el.textContent="";
 }
-function value(id){return document.getElementById(id).value.trim()}
-function selectedFile(id){return document.getElementById(id).files[0]||null}
-function newProductId(){return crypto.randomUUID()}
+
+function value(id){
+  return document.getElementById(id).value.trim();
+}
+
+function selectedFile(id){
+  return document.getElementById(id).files[0]||null;
+}
+
+function newProductId(){
+  return crypto.randomUUID();
+}
+
 function extension(file){
   const name=file?.name||"";
   const dot=name.lastIndexOf(".");
   return dot>=0?name.substring(dot+1).toLowerCase():"bin";
 }
-function cleanPathName(name){return name.replace(/[^a-zA-Z0-9._-]/g,"_")}
+
+function cleanPathName(name){
+  return name.replace(/[^a-zA-Z0-9._-]/g,"_");
+}
+
 function makeSlug(title,id){
   const clean=title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,65);
   return clean+"-"+id.slice(0,8);
 }
+
 function formatMoney(kobo){
   return "₦"+(Number(kobo||0)/100).toLocaleString("en-NG");
 }
+
 function escapeHTML(text){
   return String(text??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
   })[c]);
 }
+
 function statusBadge(status){
   const allowed=["pending","approved","draft"];
   const safe=allowed.includes(status)?status:"unknown";
   return '<span class="badge '+safe+'">'+safe.toUpperCase()+'</span>';
 }
+
 function setButtonLoading(id,loading,label){
   const button=document.getElementById(id);
   button.disabled=loading;
   button.textContent=loading?"Processing...":label;
 }
+
 function validPrice(price){
   return Number.isFinite(price)&&price>0&&Number.isSafeInteger(Math.round(price*100));
 }
@@ -356,8 +988,15 @@ function validPrice(price){
 /* AUTHENTICATION */
 async function verifyAdmin(){
   const {data,error}=await supabaseClient.rpc("is_485_admin");
-  if(error)throw new Error("Administrator verification failed: "+error.message);
-  if(data!==true)throw new Error("This account does not have 485 MUSIC administrator access.");
+
+  if(error){
+    throw new Error("Administrator verification failed: "+error.message);
+  }
+
+  if(data!==true){
+    throw new Error("This account does not have 485 MUSIC administrator access.");
+  }
+
   adminVerified=true;
 }
 
@@ -368,23 +1007,32 @@ async function showDashboard(user){
   if(dashboardPromise&&dashboardUserId===user.id)return dashboardPromise;
 
   dashboardUserId=user.id;
+
   dashboardPromise=(async()=>{
     currentUser=user;
+
     try{
       await verifyAdmin();
+
       document.getElementById("loginSection").style.display="none";
       document.getElementById("app").style.display="block";
       document.getElementById("adminEmail").textContent=user.email||"";
+
       await loadCategories();
       await loadProducts();
+
     }catch(error){
       adminVerified=false;
       currentUser=null;
       dashboardUserId=null;
+
       document.getElementById("app").style.display="none";
       document.getElementById("loginSection").style.display="block";
+
       showStatus("loginStatus",error.message,"error");
+
       await supabaseClient.auth.signOut();
+
     }finally{
       dashboardPromise=null;
     }
@@ -395,17 +1043,23 @@ async function showDashboard(user){
 
 document.getElementById("loginForm").addEventListener("submit",async event=>{
   event.preventDefault();
+
   clearStatus("loginStatus");
   setButtonLoading("loginButton",true,"Sign In");
+
   try{
     const {data,error}=await supabaseClient.auth.signInWithPassword({
       email:value("email"),
       password:document.getElementById("password").value
     });
+
     if(error)throw error;
+
     await showDashboard(data.user);
+
   }catch(error){
     showStatus("loginStatus",error.message,"error");
+
   }finally{
     setButtonLoading("loginButton",false,"Sign In");
   }
@@ -413,10 +1067,12 @@ document.getElementById("loginForm").addEventListener("submit",async event=>{
 
 document.getElementById("logoutButton").addEventListener("click",async()=>{
   const {error}=await supabaseClient.auth.signOut();
+
   if(error){
     showStatus("uploadStatus","Sign out failed: "+error.message,"error");
     return;
   }
+
   resetDashboard();
 });
 
@@ -426,6 +1082,7 @@ function resetDashboard(){
   dashboardUserId=null;
   dashboardPromise=null;
   allProducts=[];
+
   document.getElementById("app").style.display="none";
   document.getElementById("loginSection").style.display="block";
 }
@@ -434,18 +1091,25 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_IN"&&session?.user){
     setTimeout(()=>showDashboard(session.user),0);
   }
-  if(event==="SIGNED_OUT")resetDashboard();
+
+  if(event==="SIGNED_OUT"){
+    resetDashboard();
+  }
 });
 
 async function initialise(){
   const {data,error}=await supabaseClient.auth.getSession();
+
   if(error){
     showStatus("loginStatus",error.message,"error");
     return;
   }
-  if(data.session?.user)await showDashboard(data.session.user);
+
+  if(data.session?.user){
+    await showDashboard(data.session.user);
+  }
 }
- 
+
 /* CATEGORIES */
 async function loadCategories(){
   const {data,error}=await supabaseClient
@@ -453,9 +1117,12 @@ async function loadCategories(){
     .select("id,name,slug")
     .order("name");
 
-  if(error)throw new Error("Could not load product categories: "+error.message);
+  if(error){
+    throw new Error("Could not load product categories: "+error.message);
+  }
 
   categories=data||[];
+
   const select=document.getElementById("digitalCategory");
   select.innerHTML='<option value="">Select a category</option>';
 
@@ -475,8 +1142,10 @@ async function loadCategories(){
 document.querySelectorAll('input[name="productMode"]').forEach(input=>{
   input.addEventListener("change",()=>{
     const mode=document.querySelector('input[name="productMode"]:checked').value;
+
     document.getElementById("digitalForm").classList.toggle("hidden",mode!=="digital_product");
     document.getElementById("beatForm").classList.toggle("hidden",mode!=="beat");
+
     clearStatus("uploadStatus");
   });
 });
@@ -492,11 +1161,13 @@ const licenceControls=[
 licenceControls.forEach(item=>{
   document.getElementById(item.checkbox).addEventListener("change",event=>{
     const active=event.target.checked;
+
     document.getElementById(item.fields).classList.toggle("active",active);
     document.getElementById(item.price).required=active;
     document.getElementById(item.file).required=active;
   });
 });
+
 function getSelectedLicences(){
   return licenceControls.filter(item=>document.getElementById(item.checkbox).checked);
 }
@@ -504,45 +1175,62 @@ function getSelectedLicences(){
 /* PRIVATE STORAGE */
 async function uploadPrivateFile(bucket,path,file){
   if(!file)return null;
-  if(!currentUser||!adminVerified)throw new Error("Administrator authentication is required.");
+
+  if(!currentUser||!adminVerified){
+    throw new Error("Administrator authentication is required.");
+  }
 
   const {data,error}=await supabaseClient.storage.from(bucket).upload(path,file,{
     cacheControl:"3600",
     upsert:false,
     contentType:file.type||undefined
   });
-  if(error)throw new Error("File upload failed ("+file.name+"): "+error.message);
+
+  if(error){
+    throw new Error("File upload failed ("+file.name+"): "+error.message);
+  }
+
   return data.path;
 }
 
 async function uploadProductFile(bucket,userId,productId,folder,file){
   if(!file)return null;
+
   const fileName=Date.now()+"-"+cleanPathName(file.name);
   const path=userId+"/"+productId+"/"+folder+"/"+fileName;
+
   return uploadPrivateFile(bucket,path,file);
 }
 
 async function removeUploadedFiles(bucket,paths){
   const valid=paths.filter(Boolean);
+
   if(!valid.length)return;
+
   const {error}=await supabaseClient.storage.from(bucket).remove(valid);
-  if(error)console.warn("Storage cleanup failed:",error.message);
+
+  if(error){
+    console.warn("Storage cleanup failed:",error.message);
+  }
 }
 
 /*
-  Creates a short-lived signed URL only to test whether the private
-  object exists and is accessible to the authenticated administrator.
-  The URL is never displayed, stored in the database or made public.
+Creates a short-lived signed URL only to test whether the private
+object exists and is accessible to the authenticated administrator.
+The URL is never displayed or stored in the database.
 */
 async function verifyPrivateObject(bucket,path){
   if(!path||typeof path!=="string")return false;
+
   const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,60);
+
   return !error&&!!data?.signedUrl;
 }
 
 /* DIGITAL PRODUCT UPLOAD */
 document.getElementById("digitalForm").addEventListener("submit",async event=>{
   event.preventDefault();
+
   clearStatus("uploadStatus");
 
   if(!adminVerified||!currentUser){
@@ -581,6 +1269,7 @@ document.getElementById("digitalForm").addEventListener("submit",async event=>{
       coverPath=await uploadProductFile(PREVIEW_BUCKET,currentUser.id,productId,"cover",cover);
       previewPaths.push(coverPath);
     }
+
     if(preview){
       previewPath=await uploadProductFile(PREVIEW_BUCKET,currentUser.id,productId,"preview",preview);
       previewPaths.push(previewPath);
@@ -606,26 +1295,33 @@ document.getElementById("digitalForm").addEventListener("submit",async event=>{
     };
 
     const {error}=await supabaseClient.from("products").insert(product);
+
     if(error)throw error;
+
     productCreated=true;
 
     document.getElementById("digitalForm").reset();
+
     showStatus("uploadStatus","Digital product uploaded successfully and submitted for approval.","success");
+
     await loadProducts();
 
   }catch(error){
+
     if(!productCreated){
       await removeUploadedFiles(PREVIEW_BUCKET,previewPaths);
       await removeUploadedFiles(DOWNLOAD_BUCKET,downloadPaths);
     }
+
     showStatus(
       "uploadStatus",
       "Digital product upload failed.\n\n"+error.message+
       (productCreated
-        ? "\n\nThe product record was created. Check Product Management before retrying."
-        : "\n\nNo product record was created. Uploaded files were scheduled for cleanup."),
+        ?"\n\nThe product record was created. Check Product Management before retrying."
+        :"\n\nNo product record was created. Uploaded files were scheduled for cleanup."),
       "error"
     );
+
   }finally{
     setButtonLoading("digitalSubmit",false,buttonText);
   }
@@ -634,6 +1330,7 @@ document.getElementById("digitalForm").addEventListener("submit",async event=>{
 /* BEAT / INSTRUMENTAL UPLOAD */
 document.getElementById("beatForm").addEventListener("submit",async event=>{
   event.preventDefault();
+
   clearStatus("uploadStatus");
 
   if(!adminVerified||!currentUser){
@@ -656,23 +1353,28 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     showStatus("uploadStatus","Enter a beat title and description.","error");
     return;
   }
+
   if(bpm!==null&&(!Number.isInteger(bpm)||bpm<1||bpm>300)){
     showStatus("uploadStatus","BPM must be between 1 and 300.","error");
     return;
   }
+
   if(!selectedLicences.length){
     showStatus("uploadStatus","Select at least one licence before uploading this beat.","error");
     return;
   }
 
   const licenceData=[];
+
   for(const licence of selectedLicences){
     const price=Number(value(licence.price));
     const file=selectedFile(licence.file);
+
     if(!validPrice(price)||!file){
       showStatus("uploadStatus","Every selected licence needs a valid price and its required file.","error");
       return;
     }
+
     licenceData.push({...licence,price,file});
   }
 
@@ -680,6 +1382,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     ?selectedFile("fileAgreement"):null;
 
   const buttonText="Upload Beat & Licences";
+
   setButtonLoading("beatSubmit",true,buttonText);
 
   const productId=newProductId();
@@ -691,7 +1394,10 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     showStatus("uploadStatus","Uploading beat files. Please keep this page open.","info");
 
     const beatCategory=categories.find(item=>item.slug===BEAT_CATEGORY_SLUG);
-    if(!beatCategory)throw new Error("Beats & Instrumentals category was not found.");
+
+    if(!beatCategory){
+      throw new Error("Beats & Instrumentals category was not found.");
+    }
 
     let coverPath=null;
     let previewPath=null;
@@ -700,15 +1406,19 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       coverPath=await uploadProductFile(PREVIEW_BUCKET,currentUser.id,productId,"cover",cover);
       previewPaths.push(coverPath);
     }
+
     if(preview){
       previewPath=await uploadProductFile(PREVIEW_BUCKET,currentUser.id,productId,"preview",preview);
       previewPaths.push(previewPath);
     }
 
     const uploadedLicenceFiles=[];
+
     for(const licence of licenceData){
       const path=await uploadProductFile(DOWNLOAD_BUCKET,currentUser.id,productId,"licences",licence.file);
+
       downloadPaths.push(path);
+
       uploadedLicenceFiles.push({
         type:licence.type,
         path,
@@ -718,6 +1428,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     }
 
     let agreementPath=null;
+
     if(agreement){
       agreementPath=await uploadProductFile(DOWNLOAD_BUCKET,currentUser.id,productId,"licences",agreement);
       downloadPaths.push(agreementPath);
@@ -726,6 +1437,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     showStatus("uploadStatus","Files uploaded. Creating the beat records...","info");
 
     const lowestPrice=Math.min(...licenceData.map(item=>item.price));
+
     const product={
       id:productId,
       producer_id:currentUser.id,
@@ -743,12 +1455,19 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     };
 
     const {error:productError}=await supabaseClient.from("products").insert(product);
+
     if(productError)throw productError;
+
     productCreated=true;
 
     const {error:detailsError}=await supabaseClient.from("beat_details").insert({
-      product_id:productId,bpm,musical_key:musicalKey,genre,mood
+      product_id:productId,
+      bpm,
+      musical_key:musicalKey,
+      genre,
+      mood
     });
+
     if(detailsError)throw detailsError;
 
     const descriptions={
@@ -759,6 +1478,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     };
 
     for(const item of licenceData){
+
       const {data:licenceRecord,error:licenceError}=await supabaseClient
         .from("product_licenses")
         .insert({
@@ -775,7 +1495,10 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       if(licenceError)throw licenceError;
 
       const fileRecord=uploadedLicenceFiles.find(file=>file.type===item.type);
-      if(!fileRecord)throw new Error("Uploaded file record is missing for "+item.type+".");
+
+      if(!fileRecord){
+        throw new Error("Uploaded file record is missing for "+item.type+".");
+      }
 
       const rows=[{
         license_id:licenceRecord.id,
@@ -796,6 +1519,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       const {error:fileError}=await supabaseClient
         .from("product_license_files")
         .insert(rows);
+
       if(fileError)throw fileError;
     }
 
@@ -808,6 +1532,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     if(pendingError)throw pendingError;
 
     document.getElementById("beatForm").reset();
+
     licenceControls.forEach(item=>{
       document.getElementById(item.fields).classList.remove("active");
       document.getElementById(item.price).required=false;
@@ -819,15 +1544,18 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
       "Beat uploaded successfully.\nAll licence records and files have been saved.\n\nProduct status: PENDING APPROVAL.",
       "success"
     );
+
     await loadProducts();
 
   }catch(error){
+
     if(!productCreated){
       await removeUploadedFiles(PREVIEW_BUCKET,previewPaths);
       await removeUploadedFiles(DOWNLOAD_BUCKET,downloadPaths);
     }
 
     let message="Beat upload was not completed.\n\n"+error.message;
+
     if(productCreated){
       message+="\n\nIMPORTANT: A product record was created, but a later database step failed. It should remain a DRAFT. Check Product Management before retrying.\n\nProduct ID: "+productId;
     }else{
@@ -835,7 +1563,9 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
     }
 
     showStatus("uploadStatus",message,"error");
+
     await loadProducts();
+
   }finally{
     setButtonLoading("beatSubmit",false,buttonText);
   }
@@ -844,6 +1574,7 @@ document.getElementById("beatForm").addEventListener("submit",async event=>{
 /* PRODUCT MANAGEMENT */
 async function loadProducts(){
   const list=document.getElementById("productList");
+
   list.innerHTML='<div class="empty-state">Loading products...</div>';
 
   if(!adminVerified){
@@ -863,6 +1594,7 @@ async function loadProducts(){
   }
 
   allProducts=data||[];
+
   updateDashboardCounts();
   renderProducts();
 }
@@ -875,6 +1607,7 @@ function updateDashboardCounts(){
 
 function renderProducts(){
   const list=document.getElementById("productList");
+
   const products=activeFilter==="all"
     ?allProducts
     :allProducts.filter(item=>item.status===activeFilter);
@@ -885,6 +1618,7 @@ function renderProducts(){
   }
 
   list.innerHTML="";
+
   products.forEach(product=>{
     const card=document.createElement("div");
     card.className="product-card";
@@ -893,12 +1627,14 @@ function renderProducts(){
     top.className="product-top";
 
     const info=document.createElement("div");
+
     const title=document.createElement("div");
     title.className="product-title";
     title.textContent=product.title||"Untitled product";
 
     const meta=document.createElement("div");
     meta.className="product-meta";
+
     meta.textContent=
       (product.product_type==="beat"?"Beat / Instrumental":"Digital Product")+
       " · "+formatMoney(product.price_kobo)+
@@ -916,6 +1652,7 @@ function renderProducts(){
     reviewButton.addEventListener("click",()=>toggleReview(product.id,card,reviewButton));
 
     actions.appendChild(reviewButton);
+
     top.append(info,actions);
 
     const details=document.createElement("div");
@@ -931,8 +1668,10 @@ function renderProducts(){
 document.querySelectorAll(".filter-button").forEach(button=>{
   button.addEventListener("click",()=>{
     document.querySelectorAll(".filter-button").forEach(item=>item.classList.remove("active"));
+
     button.classList.add("active");
     activeFilter=button.dataset.filter;
+
     renderProducts();
   });
 });
@@ -963,21 +1702,35 @@ function expectedFileRole(type){
 }
 
 /*
-  Approval validation:
-  - Digital product: its private download object must be accessible.
-  - Beat: metadata, active licence records, the correct file role,
-    and an accessible private object are required for every active licence.
+Approval validation:
+- Digital product: its private download object must be accessible.
+- Beat: metadata, active licence records, the correct file role,
+  and an accessible private object are required for every active licence.
 */
 async function inspectProductForApproval(product){
+
   if(product.product_type!=="beat"){
+
     if(!product.download_file_path){
-      return{ok:false,reason:"The private digital download path is missing."};
+      return{
+        ok:false,
+        reason:"The private digital download path is missing."
+      };
     }
+
     const exists=await verifyPrivateObject(DOWNLOAD_BUCKET,product.download_file_path);
+
     if(!exists){
-      return{ok:false,reason:"The private digital download file could not be verified in storage."};
+      return{
+        ok:false,
+        reason:"The private digital download file could not be verified in storage."
+      };
     }
-    return{ok:true,reason:"The private digital download file is present and accessible."};
+
+    return{
+      ok:true,
+      reason:"The private digital download file is present and accessible."
+    };
   }
 
   const {data:beat,error:beatError}=await supabaseClient
@@ -986,8 +1739,16 @@ async function inspectProductForApproval(product){
     .eq("product_id",product.id)
     .maybeSingle();
 
-  if(beatError)throw new Error("Could not load beat metadata: "+beatError.message);
-  if(!beat)return{ok:false,reason:"Beat metadata is missing."};
+  if(beatError){
+    throw new Error("Could not load beat metadata: "+beatError.message);
+  }
+
+  if(!beat){
+    return{
+      ok:false,
+      reason:"Beat metadata is missing."
+    };
+  }
 
   const {data:licences,error:licenceError}=await supabaseClient
     .from("product_licenses")
@@ -995,13 +1756,26 @@ async function inspectProductForApproval(product){
     .eq("product_id",product.id)
     .eq("is_active",true);
 
-  if(licenceError)throw new Error("Could not load licences: "+licenceError.message);
-  if(!licences?.length)return{ok:false,reason:"No active beat licences were found."};
+  if(licenceError){
+    throw new Error("Could not load licences: "+licenceError.message);
+  }
+
+  if(!licences?.length){
+    return{
+      ok:false,
+      reason:"No active beat licences were found."
+    };
+  }
 
   for(const licence of licences){
+
     const requiredRole=expectedFileRole(licence.license_type);
+
     if(!requiredRole){
-      return{ok:false,reason:"An unsupported licence type was found: "+licence.license_type};
+      return{
+        ok:false,
+        reason:"An unsupported licence type was found: "+licence.license_type
+      };
     }
 
     const {data:files,error:fileError}=await supabaseClient
@@ -1009,7 +1783,9 @@ async function inspectProductForApproval(product){
       .select("id,file_role,file_format,file_path")
       .eq("license_id",licence.id);
 
-    if(fileError)throw new Error("Could not check licence files: "+fileError.message);
+    if(fileError){
+      throw new Error("Could not check licence files: "+fileError.message);
+    }
 
     const requiredFile=(files||[]).find(file=>
       file.file_role===requiredRole&&!!file.file_path
@@ -1023,6 +1799,7 @@ async function inspectProductForApproval(product){
     }
 
     const exists=await verifyPrivateObject(DOWNLOAD_BUCKET,requiredFile.file_path);
+
     if(!exists){
       return{
         ok:false,
@@ -1031,7 +1808,10 @@ async function inspectProductForApproval(product){
     }
   }
 
-  return{ok:true,reason:"Beat metadata, active licences and required private files passed verification."};
+  return{
+    ok:true,
+    reason:"Beat metadata, active licences and required private files passed verification."
+  };
 }
 
 /* REVIEW PANEL */
@@ -1046,36 +1826,47 @@ async function toggleReview(productId,card,button){
 
   panel.classList.add("open");
   button.textContent="Hide Details";
+
   panel.innerHTML='<div class="hint">Loading product information and checking private files...</div>';
 
   const product=allProducts.find(item=>item.id===productId);
+
   if(!product){
     panel.innerHTML='<div class="review-warning">Product could not be found. Refresh the dashboard.</div>';
     return;
   }
 
   try{
+
     let html='<div class="detail-grid">';
+
     html+=detailItem("Description",product.description||"No description provided");
     html+=detailItem("Product type",product.product_type||"Not specified");
     html+=detailItem("Status",product.status||"Unknown");
     html+=detailItem("Listed price",formatMoney(product.price_kobo));
+
     html+='</div>';
 
     if(product.product_type==="beat"){
+
       const {data:beat,error:beatError}=await supabaseClient
         .from("beat_details")
         .select("bpm,musical_key,genre,mood")
         .eq("product_id",productId)
         .maybeSingle();
 
-      if(beatError)throw new Error("Could not load beat details: "+beatError.message);
+      if(beatError){
+        throw new Error("Could not load beat details: "+beatError.message);
+      }
 
-      html+='<h3 style="font-size:14px;margin:18px 0 10px">Beat Information</h3><div class="detail-grid">';
+      html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Beat Information</h3>';
+      html+='<div class="detail-grid">';
+
       html+=detailItem("BPM",beat?.bpm??"Not provided");
       html+=detailItem("Musical key",beat?.musical_key||"Not provided");
       html+=detailItem("Genre",beat?.genre||"Not provided");
       html+=detailItem("Mood",beat?.mood||"Not provided");
+
       html+='</div>';
 
       const {data:licences,error:licenceError}=await supabaseClient
@@ -1084,23 +1875,29 @@ async function toggleReview(productId,card,button){
         .eq("product_id",productId)
         .order("price_kobo");
 
-      if(licenceError)throw new Error("Could not load beat licences: "+licenceError.message);
+      if(licenceError){
+        throw new Error("Could not load beat licences: "+licenceError.message);
+      }
 
-      html+='<h3 style="font-size:14px;margin:18px 0 10px">Available Licences</h3>';
+      html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Available Licences</h3>';
 
       if(!licences?.length){
         html+='<div class="review-warning">No licence records were found. This beat cannot be approved.</div>';
       }
 
       for(const licence of licences||[]){
+
         const {data:files,error:fileError}=await supabaseClient
           .from("product_license_files")
           .select("file_role,file_format,file_path")
           .eq("license_id",licence.id);
 
-        if(fileError)throw new Error("Could not inspect licence files: "+fileError.message);
+        if(fileError){
+          throw new Error("Could not inspect licence files: "+fileError.message);
+        }
 
         const fileList=files||[];
+
         const fileSummary=fileList.length
           ?fileList.map(file=>escapeHTML(file.file_role)+" ("+escapeHTML(file.file_format)+")").join(", ")
           :"No file records found";
@@ -1112,19 +1909,27 @@ async function toggleReview(productId,card,button){
         html+='<div class="product-meta">Files recorded: '+fileSummary+'</div>';
         html+='</div>';
       }
+
     }else{
-      html+='<h3 style="font-size:14px;margin:18px 0 10px">Digital Download</h3>';
+
+      html+='<h3 style="font-size:14px;margin:18px 0 10px;color:var(--gold-light)">Digital Download</h3>';
+
       if(product.download_file_path){
+
         const exists=await verifyPrivateObject(DOWNLOAD_BUCKET,product.download_file_path);
+
         html+=exists
           ?'<div class="review-success">The private download file exists and is accessible to the administrator. Its path remains hidden.</div>'
           :'<div class="review-warning">A download path is recorded, but the private file could not be verified in storage.</div>';
+
       }else{
+
         html+='<div class="review-warning">No private download file is recorded. This product cannot be approved.</div>';
       }
     }
 
     if(product.status==="pending"){
+
       const validation=await inspectProductForApproval(product);
 
       html+=validation.ok
@@ -1132,6 +1937,7 @@ async function toggleReview(productId,card,button){
         :'<div class="review-warning">Approval blocked: '+escapeHTML(validation.reason)+'</div>';
 
       html+='<div class="product-actions" id="reviewActions"></div>';
+
       panel.innerHTML=html;
 
       const actions=panel.querySelector("#reviewActions");
@@ -1148,6 +1954,7 @@ async function toggleReview(productId,card,button){
       draft.addEventListener("click",()=>changeProductStatus(product,"draft",draft));
 
       actions.append(approve,draft);
+
       return;
     }
 
@@ -1160,34 +1967,43 @@ async function toggleReview(productId,card,button){
     panel.innerHTML=html;
 
   }catch(error){
+
     panel.innerHTML='<div class="review-warning">Unable to complete the review: '+escapeHTML(error.message)+'</div>';
   }
 }
 
 /* APPROVE / RETURN TO DRAFT */
 async function changeProductStatus(product,newStatus,button){
+
   if(!adminVerified||!currentUser){
     alert("Administrator access is required.");
     return;
   }
+
   if(actionInProgress)return;
+
   if(!["approved","draft"].includes(newStatus))return;
 
   const actionText=newStatus==="approved"?"approve and publish":"return to draft";
+
   const confirmation=confirm(
     'Are you sure you want to '+actionText+' "'+product.title+'"?\n\n'+
     (newStatus==="approved"
       ?"The product will become eligible to appear in the public storefront."
       :"The product will be removed from the public storefront.")
   );
+
   if(!confirmation)return;
 
   actionInProgress=true;
+
   const oldText=button.textContent;
+
   button.disabled=true;
   button.textContent="Updating...";
 
   try{
+
     /* Re-read the record to prevent acting on stale dashboard data. */
     const {data:current,error:readError}=await supabaseClient
       .from("products")
@@ -1196,14 +2012,19 @@ async function changeProductStatus(product,newStatus,button){
       .single();
 
     if(readError)throw readError;
+
     if(current.status!=="pending"){
       throw new Error("This product is no longer pending. Refresh and review its current status.");
     }
 
     /* Run all approval checks again immediately before publishing. */
     if(newStatus==="approved"){
+
       const validation=await inspectProductForApproval(current);
-      if(!validation.ok)throw new Error(validation.reason);
+
+      if(!validation.ok){
+        throw new Error(validation.reason);
+      }
     }
 
     const {data:updated,error:updateError}=await supabaseClient
@@ -1215,7 +2036,10 @@ async function changeProductStatus(product,newStatus,button){
       .maybeSingle();
 
     if(updateError)throw updateError;
-    if(!updated)throw new Error("No product was updated. It may have changed status. Refresh and try again.");
+
+    if(!updated){
+      throw new Error("No product was updated. It may have changed status. Refresh and try again.");
+    }
 
     showStatus(
       "uploadStatus",
@@ -1228,10 +2052,14 @@ async function changeProductStatus(product,newStatus,button){
     await loadProducts();
 
   }catch(error){
+
     showStatus("uploadStatus","Product status was not changed.\n\n"+error.message,"error");
+
     button.disabled=false;
     button.textContent=oldText;
+
   }finally{
+
     actionInProgress=false;
   }
 }
@@ -1239,5 +2067,6 @@ async function changeProductStatus(product,newStatus,button){
 /* START */
 initialise();
 </script>
+
 </body>
 </html>

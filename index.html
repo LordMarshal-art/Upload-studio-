@@ -416,6 +416,61 @@ footer{
 
 .product-card:hover{border-color:#625034}
 
+.product-cover{
+  width:100%;
+  max-width:190px;
+  aspect-ratio:1/1;
+  border:1px solid #403522;
+  border-radius:9px;
+  overflow:hidden;
+  background:#17140f;
+  margin-bottom:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.product-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.cover-placeholder{
+  width:100%;
+  height:100%;
+  min-height:90px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:12px;
+  color:#a99876;
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  background:linear-gradient(145deg,#211b10,#101010);
+}
+
+.review-cover{
+  width:100%;
+  max-width:260px;
+  aspect-ratio:1/1;
+  border:1px solid #59472a;
+  border-radius:10px;
+  overflow:hidden;
+  margin:0 0 18px;
+  background:#17140f;
+}
+
+.review-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
 .product-top{
   display:flex;
   justify-content:space-between;
@@ -837,6 +892,7 @@ let activeFilter = "all";
 let actionInProgress = false;
 let dashboardPromise = null;
 let dashboardUserId = null;
+let renderVersion = 0;
 
 /* GENERAL HELPERS */
 function showStatus(id,message,type="info"){
@@ -992,6 +1048,7 @@ function resetDashboard(){
   dashboardUserId=null;
   dashboardPromise=null;
   allProducts=[];
+  renderVersion++;
 
   document.getElementById("app").style.display="none";
   document.getElementById("loginSection").style.display="block";
@@ -1114,6 +1171,67 @@ async function verifyPrivateObject(bucket,path){
 
   const {data,error}=await supabaseClient.storage.from(bucket).createSignedUrl(path,60);
   return !error&&!!data?.signedUrl;
+}
+
+/* COVER ARTWORK — PRIVATE SIGNED URLS */
+async function getPreviewSignedUrl(path){
+  if(!path)return null;
+
+  const {data,error}=await supabaseClient.storage
+    .from(PREVIEW_BUCKET)
+    .createSignedUrl(path,3600);
+
+  if(error)throw error;
+  return data?.signedUrl||null;
+}
+
+function setCoverPlaceholder(container,message){
+  if(!container)return;
+
+  container.innerHTML="";
+  const placeholder=document.createElement("div");
+  placeholder.className="cover-placeholder";
+  placeholder.textContent=message;
+  container.appendChild(placeholder);
+}
+
+async function loadCoverInto(container,path){
+  if(!container)return;
+
+  if(!path){
+    setCoverPlaceholder(container,"No cover artwork");
+    return;
+  }
+
+  setCoverPlaceholder(container,"Loading artwork...");
+
+  try{
+    const signedUrl=await getPreviewSignedUrl(path);
+
+    if(!signedUrl){
+      setCoverPlaceholder(container,"Cover unavailable");
+      return;
+    }
+
+    if(!container.isConnected)return;
+
+    const image=document.createElement("img");
+    image.alt="Product cover artwork";
+    image.loading="lazy";
+
+    image.addEventListener("error",()=>{
+      setCoverPlaceholder(container,"Cover unavailable");
+    },{once:true});
+
+    image.src=signedUrl;
+
+    container.innerHTML="";
+    container.appendChild(image);
+
+  }catch(error){
+    console.warn("Could not load product cover:",error.message);
+    setCoverPlaceholder(container,"Cover unavailable");
+  }
 }
 
 /* DIGITAL PRODUCT UPLOAD */
@@ -1475,6 +1593,7 @@ function updateDashboardCounts(){
 
 function renderProducts(){
   const list=document.getElementById("productList");
+  const thisRender=++renderVersion;
 
   const products=activeFilter==="all"
     ?allProducts
@@ -1490,6 +1609,10 @@ function renderProducts(){
   products.forEach(product=>{
     const card=document.createElement("div");
     card.className="product-card";
+
+    const cover=document.createElement("div");
+    cover.className="product-cover";
+    setCoverPlaceholder(cover,product.cover_image_path?"Loading artwork...":"No cover artwork");
 
     const top=document.createElement("div");
     top.className="product-top";
@@ -1526,8 +1649,10 @@ function renderProducts(){
     details.id="review-"+product.id;
     details.innerHTML='<div class="hint">Select Review Details to inspect this product.</div>';
 
-    card.append(top,details);
+    card.append(cover,top,details);
     list.appendChild(card);
+
+    loadCoverInto(cover,product.cover_image_path);
   });
 }
 
@@ -1658,7 +1783,8 @@ async function toggleReview(productId,card,button){
   }
 
   try{
-    let html='<div class="detail-grid">';
+    let html='<div class="review-cover" id="reviewCover"></div>';
+    html+='<div class="detail-grid">';
     html+=detailItem("Description",product.description||"No description provided");
     html+=detailItem("Product type",product.product_type||"Not specified");
     html+=detailItem("Status",product.status||"Unknown");
@@ -1730,12 +1856,14 @@ async function toggleReview(productId,card,button){
       }
     }
 
-    if(product.status==="pending"){
-      const validation=await inspectProductForApproval(product);
+    let approvalValidation=null;
 
-      html+=validation.ok
-        ?'<div class="review-success">Approval checks passed. '+escapeHTML(validation.reason)+'</div>'
-        :'<div class="review-warning">Approval blocked: '+escapeHTML(validation.reason)+'</div>';
+    if(product.status==="pending"){
+      approvalValidation=await inspectProductForApproval(product);
+
+      html+=approvalValidation.ok
+        ?'<div class="review-success">Approval checks passed. '+escapeHTML(approvalValidation.reason)+'</div>'
+        :'<div class="review-warning">Approval blocked: '+escapeHTML(approvalValidation.reason)+'</div>';
     }else if(product.status==="approved"){
       html+='<div class="review-success">This product is approved and eligible to appear in the public storefront.</div>';
     }else if(product.status==="draft"){
@@ -1745,15 +1873,16 @@ async function toggleReview(productId,card,button){
     html+='<div class="product-actions" id="reviewActions"></div>';
     panel.innerHTML=html;
 
+    const reviewCover=panel.querySelector("#reviewCover");
+    loadCoverInto(reviewCover,product.cover_image_path);
+
     const actions=panel.querySelector("#reviewActions");
 
     if(product.status==="pending"){
-      const validation=await inspectProductForApproval(product);
-
       const approve=document.createElement("button");
       approve.className="btn btn-success";
       approve.textContent="Approve & Publish";
-      approve.disabled=!validation.ok;
+      approve.disabled=!approvalValidation?.ok;
       approve.addEventListener("click",()=>changeProductStatus(product,"approved",approve));
       actions.appendChild(approve);
 
@@ -1882,8 +2011,9 @@ async function deleteProduct(product,button){
     'To permanently delete "'+product.title+'", type DELETE below.\n\nThis action cannot be undone.'
   );
 
-  if(typedConfirmation!=="DELETE"){
-    alert("Deletion cancelled. The confirmation text did not match.");
+  /* Accept DELETE, delete, Delete and surrounding spaces. */
+  if((typedConfirmation||"").trim().toUpperCase()!=="DELETE"){
+    alert("Deletion cancelled. Type DELETE to confirm.");
     return;
   }
 
@@ -1892,6 +2022,9 @@ async function deleteProduct(product,button){
   const originalText=button.textContent;
   button.disabled=true;
   button.textContent="Deleting...";
+
+  let databaseChangesStarted=false;
+  let mainProductDeleted=false;
 
   try{
 
@@ -1902,9 +2035,11 @@ async function deleteProduct(product,button){
       .eq("id",product.id)
       .single();
 
-    if(productReadError)throw new Error("Could not retrieve product before deletion: "+productReadError.message);
+    if(productReadError){
+      throw new Error("Could not retrieve product before deletion: "+productReadError.message);
+    }
 
-    /* Collect licence IDs and their associated file paths. */
+    /* Read all related database records before starting deletion. */
     const {data:licences,error:licenceReadError}=await supabaseClient
       .from("product_licenses")
       .select("id")
@@ -1928,8 +2063,18 @@ async function deleteProduct(product,button){
       }
 
       licenceFilePaths=(files||[]).map(file=>file.file_path).filter(Boolean);
+    }
 
-      /* Delete licence-file database records first. */
+    /*
+      Database cleanup begins here.
+      This is not a transaction. If a later operation fails,
+      earlier successful database deletions cannot be rolled back
+      automatically by this browser code.
+    */
+    databaseChangesStarted=true;
+
+    if(licenceIds.length){
+
       const {error:fileDeleteError}=await supabaseClient
         .from("product_license_files")
         .delete()
@@ -1939,7 +2084,6 @@ async function deleteProduct(product,button){
         throw new Error("Could not delete licence file records: "+fileDeleteError.message);
       }
 
-      /* Delete the licence records next. */
       const {error:licenceDeleteError}=await supabaseClient
         .from("product_licenses")
         .delete()
@@ -1962,7 +2106,10 @@ async function deleteProduct(product,button){
       }
     }
 
-    /* Finally delete the main product record. */
+    /*
+      Finally delete the main product record.
+      Storage objects are not touched unless this succeeds.
+    */
     const {data:deletedProduct,error:productDeleteError}=await supabaseClient
       .from("products")
       .delete()
@@ -1975,12 +2122,16 @@ async function deleteProduct(product,button){
     }
 
     if(!deletedProduct){
-      throw new Error("The product record was not deleted. Check database permissions and product relationships.");
+      throw new Error(
+        "The product record was not deleted. Possible causes include database permissions, row-level security policies, or related purchase/order records."
+      );
     }
 
+    mainProductDeleted=true;
+
     /*
-      Database records have now been removed.
-      Remove associated private storage objects afterwards.
+      Only after confirmed deletion of the main product row
+      do we attempt to remove its associated Storage objects.
     */
     const downloadPaths=[
       current.download_file_path,
@@ -1992,7 +2143,7 @@ async function deleteProduct(product,button){
       current.preview_audio_path
     ].filter(Boolean);
 
-    let storageErrors=[];
+    const storageErrors=[];
 
     if(downloadPaths.length){
       const {error}=await supabaseClient.storage
@@ -2029,15 +2180,23 @@ async function deleteProduct(product,button){
     await loadProducts();
 
   }catch(error){
-    showStatus(
-      "uploadStatus",
-      "Product deletion did not complete successfully.\n\n"+error.message+
-      "\n\nSome earlier database operations may already have succeeded. Refresh Product Management and inspect the product before retrying.",
-      "error"
-    );
+
+    let message="Product deletion did not complete successfully.\n\n"+error.message;
+
+    if(mainProductDeleted){
+      message+="\n\nThe main product record was deleted, but a later cleanup step failed. Check Storage for files that may remain.";
+    }else if(databaseChangesStarted){
+      message+="\n\nIMPORTANT: Database cleanup had already started. Some related records may have been deleted before this failure. The main product record was not confirmed deleted, and Storage files were not removed. Refresh Product Management and inspect the product before retrying.";
+    }else{
+      message+="\n\nNo database deletion was started. The product and its related records should remain unchanged.";
+    }
+
+    showStatus("uploadStatus",message,"error");
 
     button.disabled=false;
     button.textContent=originalText;
+
+    await loadProducts();
 
   }finally{
     actionInProgress=false;

@@ -408,11 +408,11 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
   </div>
 
   <div class="card" id="vendorsCard">
-    <h2>05 — Vendor Applications &amp; Payout Requests</h2>
+    <h2>05 — Vendor Applications &amp; Withdrawal Requests</h2>
     <div id="vendorApplicationsList"><div class="empty-state">Loading vendor applications...</div></div>
     <hr>
     <h2 style="font-size:15px">Withdrawal Requests</h2>
-    <div id="payoutRequestsList"><div class="empty-state">Loading payout requests...</div></div>
+    <div id="payoutRequestsList"><div class="empty-state">Loading withdrawal requests...</div></div>
   </div>
 
 </section>
@@ -702,6 +702,16 @@ async function removeUploadedFiles(bucket, paths) {
   if (error) console.warn("Storage cleanup failed:", error.message);
 }
 
+async function cleanupUploads(pairs) {
+  const byBucket = {};
+  for (const [bucket, path] of pairs) {
+    (byBucket[bucket] ||= []).push(path);
+  }
+  for (const [bucket, paths] of Object.entries(byBucket)) {
+    await removeUploadedFiles(bucket, paths);
+  }
+}
+
 async function verifyPrivateObject(bucket, path) {
   if (!path || typeof path !== "string") return false;
   const { data, error } = await supabaseClient.storage.from(bucket).createSignedUrl(path, 60);
@@ -805,16 +815,6 @@ document.getElementById("digitalForm").addEventListener("submit", async event =>
     setButtonLoading("digitalSubmit", false, "Upload Digital Product");
   }
 });
-
-async function cleanupUploads(pairs) {
-  const byBucket = {};
-  for (const [bucket, path] of pairs) {
-    (byBucket[bucket] ||= []).push(path);
-  }
-  for (const [bucket, paths] of Object.entries(byBucket)) {
-    await removeUploadedFiles(bucket, paths);
-  }
-}
 
 /* ---------- Beat upload (single insert with final status) ---------- */
 document.getElementById("beatForm").addEventListener("submit", async event => {
@@ -1056,10 +1056,10 @@ function expectedFileRole(type) {
   return ({ mp3_lease: "mp3", wav_lease: "wav", trackout_lease: "trackouts", exclusive: "wav" })[type] || null;
 }
 
-/* Advisory check in the browser. The server-side finalisation and the status rules are the real gate. */
+/* Advisory check in the browser. Final status rules are enforced by the database. */
 async function inspectProductForApproval(product) {
   if (product.product_type !== "beat") {
-    if (!product.download_file_path) return { ok: false, reason: "The private digital download path is missing." };
+    if (!product.download_file_path) return { ok: false, reason: "The private download path is missing." };
     const exists = await verifyPrivateObject(DOWNLOAD_BUCKET, product.download_file_path);
     return exists
       ? { ok: true, reason: "The private download file is present." }
@@ -1268,7 +1268,6 @@ async function deleteProduct(product, button) {
       licenceFilePaths = (files || []).map(f => f.file_path).filter(Boolean);
     }
 
-    // Refuse if sales exist: deleting would break order history and entitlements
     if (licenceIds.length) {
       const { count, error: cErr } = await supabaseClient.from("license_sales").select("id", { count: "exact", head: true }).in("license_id", licenceIds);
       if (cErr) throw cErr;
@@ -1366,7 +1365,6 @@ async function reviewVendorApplication(app, decision) {
   if (!updated) return alert("This application has already been reviewed.");
 
   if (decision === "approved") {
-    // Creates the vendor profile and balance row. Role change is handled by the database.
     const { data: vp, error: vpErr } = await supabaseClient.from("vendor_profiles")
       .upsert({
         user_id: app.user_id,
@@ -1403,7 +1401,7 @@ async function reviewVendorApplication(app, decision) {
   await Promise.all([loadVendorApplications(), loadAnalytics()]);
 }
 
-/* ---------- Payout requests (read-only here; processing is done by the database function) ---------- */
+/* ---------- Withdrawal requests ---------- */
 async function loadPayoutRequests() {
   const box = document.getElementById("payoutRequestsList");
   const { data, error } = await supabaseClient
@@ -1411,15 +1409,56 @@ async function loadPayoutRequests() {
     .select("id,vendor_id,amount_kobo,status,created_at,processed_at,vendor_profiles(stage_name)")
     .order("created_at", { ascending: false })
     .limit(50);
-  if (error) { box.innerHTML = '<div class="empty-state">Could not load payout requests: ' + escapeHTML(error.message) + '</div>'; return; }
+  if (error) { box.innerHTML = '<div class="empty-state">Could not load withdrawal requests: ' + escapeHTML(error.message) + '</div>'; return; }
   if (!data?.length) { box.innerHTML = '<div class="empty-state">No withdrawal requests recorded.</div>'; return; }
 
   box.innerHTML = data.map(p => `
-    <div class="license-review">
+    <div class="license-review" data-payout-id="${escapeHTML(p.id)}">
       <strong>${escapeHTML(p.vendor_profiles?.stage_name || "Vendor")}</strong> · ${formatMoney(p.amount_kobo)} ${statusBadge(p.status === "pending" ? "pending" : (p.status === "paid" ? "approved" : "unknown"))}
       <div class="product-meta">Requested ${new Date(p.created_at).toLocaleDateString()}${p.processed_at ? " · Processed " + new Date(p.processed_at).toLocaleDateString() : ""} · Status: ${escapeHTML(p.status)}</div>
+      ${p.status === "pending" ? `
+        <div class="product-actions">
+          <button class="btn btn-success" type="button" data-payout="paid">Mark Paid</button>
+          <button class="btn btn-danger" type="button" data-payout="rejected">Reject</button>
+        </div>` : ""}
     </div>
   `).join("");
+
+  box.querySelectorAll("[data-payout]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("[data-payout-id]");
+      processPayout(row.dataset.payoutId, btn.dataset.payout, btn);
+    });
+  });
+}
+
+async function processPayout(payoutId, decision, button) {
+  if (!adminVerified || !currentUser || actionInProgress) return;
+  let note = null;
+  if (decision === "rejected") {
+    note = (prompt("Reason for rejecting this withdrawal:") || "").trim();
+    if (!note) return alert("A reason is required.");
+  } else if (!confirm("Confirm you have sent this payout manually. The amount will be deducted from the vendor's available balance.")) {
+    return;
+  }
+
+  actionInProgress = true;
+  button.disabled = true;
+  try {
+    const { error } = await supabaseClient.rpc("process_payout", {
+      p_payout_id: payoutId,
+      p_decision: decision,
+      p_note: note
+    });
+    if (error) throw error;
+    showStatus("uploadStatus", `Withdrawal ${decision}.`, "success");
+    await Promise.all([loadPayoutRequests(), loadAnalytics()]);
+  } catch (err) {
+    showStatus("uploadStatus", "Withdrawal update failed: " + err.message, "error");
+    button.disabled = false;
+  } finally {
+    actionInProgress = false;
+  }
 }
 
 initialise();

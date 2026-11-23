@@ -4,72 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090909">
-<meta name="description" content="485 Upload Studio — manage digital music products, beats, licences, vendors and payouts.">
+<meta name="description" content="485 Upload Studio — administrator portal for digital products, beats, licences, vendors and payouts.">
 <title>485 Upload Studio</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 :root {
-  --gold:#c6a15b;
-  --gold-light:#ead5a4;
-  --gold-dark:#98733b;
-  --ink:#f4f0e7;
-  --muted:#a09b91;
-  --paper:#090909;
-  --panel:#111;
-  --panel-light:#191919;
-  --line:#302b22;
-  --green:#65bd87;
-  --red:#e17870;
-  --blue:#8baed0;
-  --amber:#dfb76d;
+  --gold:#c6a15b; --gold-light:#ead5a4; --gold-dark:#98733b;
+  --ink:#f4f0e7; --muted:#a09b91; --paper:#090909; --panel:#111;
+  --line:#302b22; --green:#65bd87; --red:#e17870; --amber:#dfb76d;
   --shadow:0 15px 45px rgba(0,0,0,.35);
 }
-
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-
 body{
-  margin:0;
+  margin:0;min-height:100vh;color:var(--ink);font-family:Inter,Arial,sans-serif;
   background:radial-gradient(ellipse at top,rgba(198,161,91,.055),transparent 45%),var(--paper);
-  color:var(--ink);
-  font-family:Inter,Arial,sans-serif;
-  min-height:100vh;
 }
-
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-
 header{
-  background:rgba(12,12,12,.96);
-  border-bottom:1px solid var(--line);
-  padding:20px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  position:relative;
+  background:rgba(12,12,12,.96);border-bottom:1px solid var(--line);
+  padding:20px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px;position:relative
 }
-
-header:after{
-  content:"";position:absolute;bottom:-1px;left:5%;width:110px;height:1px;background:var(--gold);
-}
-
+header:after{content:"";position:absolute;bottom:-1px;left:5%;width:110px;height:1px;background:var(--gold)}
 .brand{font-size:22px;font-weight:900;letter-spacing:3px;color:#fff}
 .brand span{color:var(--gold)}
 .header-label{color:var(--gold-light);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:700}
-
 .container{width:min(1120px,92%);margin:40px auto 70px}
 h1{font-size:clamp(26px,4vw,38px);margin:0 0 8px;color:#fff;letter-spacing:-.7px}
 h2{color:var(--gold-light)}
 .subtitle{color:var(--muted);margin:0 0 28px;line-height:1.7}
-
 .card{
-  background:linear-gradient(145deg,#151515,#101010);
-  border:1px solid var(--line);border-radius:13px;padding:25px;margin-bottom:22px;box-shadow:var(--shadow)
+  background:linear-gradient(145deg,#151515,#101010);border:1px solid var(--line);
+  border-radius:13px;padding:25px;margin-bottom:22px;box-shadow:var(--shadow)
 }
 .card h2{font-size:17px;margin:0 0 20px}
-
 label{display:block;font-size:13px;font-weight:650;margin:15px 0 7px;color:#ddd7cb}
 input,textarea,select{
   width:100%;padding:13px;border:1px solid #39352d;border-radius:7px;
@@ -86,38 +55,30 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--gold)}
 select option{background:#111;color:#fff}
 textarea{min-height:105px;resize:vertical}
 small,.hint{color:var(--muted);font-size:12px;line-height:1.6}
-
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
 .full{grid-column:1/-1}
-
 .mode-switch{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:5px}
 .mode-option{
   border:1px solid var(--line);border-radius:8px;padding:14px 18px;flex:1;min-width:150px;
   cursor:pointer;background:#101010;color:#d5cfc3;transition:.2s
 }
-.mode-option:has(input:checked){
-  border-color:var(--gold);background:#211b10;color:var(--gold-light);
-  box-shadow:inset 0 0 0 1px rgba(198,161,91,.12)
-}
+.mode-option:has(input:checked){border-color:var(--gold);background:#211b10;color:var(--gold-light)}
 .mode-option input{width:auto;margin-right:8px}
-
 .btn{border:1px solid transparent;border-radius:7px;padding:12px 18px;font-weight:750;font-size:13px;transition:.2s}
 .btn-primary{background:linear-gradient(135deg,#e0c17f,#b58c49);color:#100e09;border-color:#e3c88f}
-.btn-primary:hover{background:linear-gradient(135deg,#f0d79d,#c39b57);transform:translateY(-1px)}
+.btn-primary:hover:not(:disabled){background:linear-gradient(135deg,#f0d79d,#c39b57);transform:translateY(-1px)}
 .btn-secondary{background:#22201b;color:var(--gold-light);border-color:#51432c}
-.btn-secondary:hover{background:#30291d;border-color:var(--gold)}
+.btn-secondary:hover:not(:disabled){background:#30291d;border-color:var(--gold)}
 .btn-danger{background:#2b1716;color:#f08e86;border-color:#63312e}
-.btn-danger:hover{background:#421e1c;border-color:#a54e47}
+.btn-danger:hover:not(:disabled){background:#421e1c;border-color:#a54e47}
 .btn-success{background:#14271c;color:#79d49a;border-color:#315c40}
+.btn-success:hover:not(:disabled){background:#1c3827}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-
 .submit-row,.product-actions{margin-top:17px;display:flex;flex-wrap:wrap;gap:10px}
-
 .status{display:none;padding:14px;border-radius:8px;margin:15px 0;font-size:13px;line-height:1.7;white-space:pre-wrap;border:1px solid transparent}
 .status.success{display:block;background:#122219;border-color:#31583d;color:#8cdaa6}
 .status.error{display:block;background:#281514;border-color:#63312e;color:#f08e86}
 .status.info{display:block;background:#251e12;border-color:#67502d;color:#e5c681}
-
 .license-card{border:1px solid var(--line);border-radius:9px;padding:17px;margin:13px 0;background:#101010}
 .license-heading{display:flex;align-items:center;gap:10px;font-weight:750;color:var(--gold-light)}
 .license-heading input{width:auto;margin:0}
@@ -125,78 +86,53 @@ small,.hint{color:var(--muted);font-size:12px;line-height:1.6}
 .license-fields{display:none;margin-top:12px}
 .license-fields.active{display:block}
 .license-fields label{margin-top:12px}
-
 .badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:10px;letter-spacing:.5px;background:#302719;color:var(--gold-light);margin:5px 5px 0 0;font-weight:750}
 .badge.approved{background:#14271c;color:#79d49a}
 .badge.pending{background:#302513;color:#e5bd71}
 .badge.draft{background:#18232d;color:#9bbbd8}
 .badge.rejected{background:#2f1716;color:#f08e86}
 .badge.unknown{background:#282828;color:#aaa}
-
 .hidden{display:none!important}
 #app{display:none}
-
-footer{
-  text-align:center;padding:28px 15px;color:#77736b;font-size:11px;
-  line-height:1.9;border-top:1px solid var(--line);letter-spacing:.5px
-}
-
+footer{text-align:center;padding:28px 15px;color:#77736b;font-size:11px;line-height:1.9;border-top:1px solid var(--line);letter-spacing:.5px}
 .dashboard-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 0}
-.stat-box{
-  border:1px solid var(--line);border-radius:9px;padding:15px;background:#0d0d0d;
-  position:relative;overflow:hidden
-}
+.stat-box{border:1px solid var(--line);border-radius:9px;padding:15px;background:#0d0d0d;position:relative;overflow:hidden}
 .stat-box:before{content:"";position:absolute;top:0;left:0;width:35px;height:2px;background:var(--gold)}
 .stat-number{font-size:22px;font-weight:850;color:var(--gold);overflow-wrap:anywhere}
 .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.1px;margin-top:5px}
-
 .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-.filter-button{
-  border:1px solid #39352d;background:#111;border-radius:30px;padding:9px 15px;
-  font-size:11px;font-weight:750;color:#aaa49a;transition:.2s
-}
+.filter-button{border:1px solid #39352d;background:#111;border-radius:30px;padding:9px 15px;font-size:11px;font-weight:750;color:#aaa49a;transition:.2s}
 .filter-button:hover{border-color:var(--gold);color:var(--gold-light)}
 .filter-button.active{background:#292113;border-color:var(--gold);color:var(--gold-light)}
-
 .product-card{border:1px solid var(--line);border-radius:10px;padding:18px;margin:13px 0;background:#101010}
 .product-card:hover{border-color:#625034}
-
-.product-cover{
-  width:100%;max-width:190px;aspect-ratio:1/1;border:1px solid #403522;border-radius:9px;
-  overflow:hidden;background:#17140f;margin-bottom:15px;display:flex;align-items:center;justify-content:center
-}
+.product-cover{width:100%;max-width:190px;aspect-ratio:1/1;border:1px solid #403522;border-radius:9px;overflow:hidden;background:#17140f;margin-bottom:15px;display:flex;align-items:center;justify-content:center}
 .product-cover img{width:100%;height:100%;object-fit:cover;display:block}
-.cover-placeholder{
-  width:100%;height:100%;min-height:90px;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:12px;color:#a99876;font-size:11px;letter-spacing:1px;
-  text-transform:uppercase;background:linear-gradient(145deg,#211b10,#101010)
-}
+.cover-placeholder{width:100%;height:100%;min-height:90px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:#a99876;font-size:11px;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(145deg,#211b10,#101010)}
 .review-cover{width:100%;max-width:260px;aspect-ratio:1/1;border:1px solid #59472a;border-radius:10px;overflow:hidden;margin:0 0 18px;background:#17140f}
 .review-cover img{width:100%;height:100%;object-fit:cover;display:block}
-
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}
 .product-title{font-weight:800;font-size:16px;margin-bottom:6px;color:#fff}
 .product-meta{font-size:12px;color:var(--muted);line-height:1.8;overflow-wrap:anywhere}
-
 .product-details{display:none;border-top:1px solid var(--line);margin-top:15px;padding-top:15px}
 .product-details.open{display:block}
-
 .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
 .detail-item{background:#191919;border:1px solid #292929;padding:12px;border-radius:7px;min-width:0}
 .detail-item strong{display:block;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
 .detail-item span{font-size:13px;color:#e2ddd3;overflow-wrap:anywhere;white-space:pre-wrap}
-
 .license-review{border:1px solid var(--line);border-radius:8px;padding:13px;margin:10px 0;background:#151515}
 .license-review strong{color:var(--gold-light)}
-
 .review-warning{background:#2b2112;color:#e7c77f;border:1px solid #604a27;border-radius:8px;padding:12px;font-size:12px;line-height:1.7;margin-top:12px}
 .review-success{background:#14251a;color:#85d29c;border:1px solid #31583d;border-radius:8px;padding:12px;font-size:12px;line-height:1.7;margin-top:12px}
 .empty-state{text-align:center;padding:30px 12px;color:var(--muted);font-size:13px}
+.stats-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.rate-box{display:flex;gap:8px;align-items:center}
+.rate-box input{padding:8px}
+.tx-line{font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid #1d1d1d;overflow-wrap:anywhere}
 hr{border:0;border-top:1px solid var(--line);margin:25px 0}
-
 @media(max-width:850px){.dashboard-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){
-  .grid,.detail-grid{grid-template-columns:1fr}
+  .grid,.detail-grid,.stats-row{grid-template-columns:1fr}
   .full{grid-column:auto}
   .card{padding:18px}
   header{padding:17px 4%}
@@ -213,7 +149,6 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -227,7 +162,6 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
   <h1>Studio Login</h1>
   <p class="subtitle">Sign in with your authorised 485 administrator account.</p>
   <div id="loginStatus" class="status"></div>
-
   <form id="loginForm">
     <label for="email">Email address</label>
     <input id="email" type="email" autocomplete="username" required>
@@ -240,7 +174,6 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 </section>
 
 <section id="app">
-
   <h1>485 Upload Studio</h1>
   <p class="subtitle">Manage digital products, beats, licences, approvals, vendors, commissions and payouts.</p>
 
@@ -267,20 +200,23 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
       <div class="stat-box"><div class="stat-number" id="revenueAmount">₦0</div><div class="stat-label">Gross Revenue</div></div>
     </div>
 
-    <div class="dashboard-stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">
+    <div class="stats-row">
       <div class="stat-box"><div class="stat-number" id="commissionsAmount">₦0</div><div class="stat-label">Platform Commissions</div></div>
+      <div class="stat-box"><div class="stat-number" id="pendingPayoutsAmount">₦0</div><div class="stat-label">Pending Vendor Payouts</div></div>
+    </div>
+
+    <div class="stats-row">
       <div class="stat-box">
-        <div class="stat-label" style="margin-top:0;margin-bottom:8px">Commission Rate (Basis Points · 1500 = 15%)</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="commissionRateInput" type="number" min="0" max="10000" step="1" style="padding:8px">
+        <div class="stat-label" style="margin-top:0;margin-bottom:8px">Commission Rate (basis points · 1500 = 15%)</div>
+        <div class="rate-box">
+          <input id="commissionRateInput" type="number" min="0" max="10000" step="1">
           <button class="btn btn-secondary" type="button" id="saveCommissionBtn">Save</button>
         </div>
       </div>
-    </div>
-
-    <div style="margin-top:20px">
-      <strong style="font-size:13px;color:var(--gold-light)">Recent Transactions</strong>
-      <div id="recentTransactionsList" class="product-meta" style="margin-top:8px">Loading transactions...</div>
+      <div class="stat-box">
+        <div class="stat-label" style="margin-top:0;margin-bottom:8px">Recent Transactions</div>
+        <div id="recentTransactionsList" class="product-meta">Loading transactions...</div>
+      </div>
     </div>
   </div>
 
@@ -320,14 +256,14 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
         <input id="digitalPrice" type="number" min="1" step="1" required placeholder="Example: 5000">
       </div>
       <div>
-        <label for="digitalCover">Product cover image</label>
+        <label for="digitalCover">Cover image</label>
         <input id="digitalCover" type="file" accept="image/jpeg,image/png,image/webp">
-        <small>JPG, PNG or WebP (stored in 485-previews).</small>
+        <small>JPG, PNG or WebP (stored privately in 485-previews).</small>
       </div>
       <div>
         <label for="digitalPreview">Audio preview</label>
         <input id="digitalPreview" type="file" accept="audio/mpeg,audio/wav,audio/mp3">
-        <small>Optional preview audio (stored in 485-previews).</small>
+        <small>Optional preview audio (stored privately in 485-previews).</small>
       </div>
       <div class="full">
         <label for="digitalDownload">Digital product file *</label>
@@ -345,7 +281,7 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <div class="grid">
       <div class="full">
         <label for="beatTitle">Beat title *</label>
-        <input id="beatTitle" maxlength="120" required placeholder="Enter your instrumental title">
+        <input id="beatTitle" maxlength="120" required placeholder="Enter the instrumental title">
       </div>
       <div class="full">
         <label for="beatDescription">Description *</label>
@@ -372,14 +308,14 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
       </div>
       <div>
         <label for="beatGenre">Genre</label>
-        <input id="beatGenre" placeholder="Example: Afrobeat, Trap, Hip-Hop">
+        <input id="beatGenre" placeholder="Example: Afrobeats, Trap, Amapiano">
       </div>
       <div>
         <label for="beatMood">Mood</label>
         <input id="beatMood" placeholder="Example: Dark, Emotional, Energetic">
       </div>
       <div>
-        <label for="beatCover">Beat cover image</label>
+        <label for="beatCover">Cover image</label>
         <input id="beatCover" type="file" accept="image/jpeg,image/png,image/webp">
       </div>
       <div>
@@ -390,16 +326,16 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
 
     <hr>
     <h2>03 — Beat Licensing</h2>
-    <p class="hint">Select the licences you want to sell. Each licence has its own price and private downloadable file.</p>
+    <p class="hint">Select the licences you want to sell. MP3 Lease can be sold to many customers. WAV Lease, Trackout Lease and Exclusive Rights are each sold once.</p>
 
     <div class="license-card">
       <div class="license-heading">
         <input type="checkbox" class="license-check" id="checkMp3">
-        <label for="checkMp3">MP3 Lease</label>
+        <label for="checkMp3">MP3 Lease · unlimited sales</label>
       </div>
       <div class="license-fields" id="fieldsMp3">
         <label for="priceMp3">Price (NGN) *</label>
-        <input id="priceMp3" type="number" min="1" step="1" placeholder="Example: 5000">
+        <input id="priceMp3" type="number" min="1" step="1" placeholder="Example: 14000">
         <label for="fileMp3">MP3 file *</label>
         <input id="fileMp3" type="file" accept=".mp3,audio/mpeg">
       </div>
@@ -408,11 +344,11 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <div class="license-card">
       <div class="license-heading">
         <input type="checkbox" class="license-check" id="checkWav">
-        <label for="checkWav">WAV Lease</label>
+        <label for="checkWav">WAV Lease · single sale</label>
       </div>
       <div class="license-fields" id="fieldsWav">
         <label for="priceWav">Price (NGN) *</label>
-        <input id="priceWav" type="number" min="1" step="1" placeholder="Example: 10000">
+        <input id="priceWav" type="number" min="1" step="1" placeholder="Example: 25000">
         <label for="fileWav">WAV file *</label>
         <input id="fileWav" type="file" accept=".wav,audio/wav">
       </div>
@@ -421,11 +357,11 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <div class="license-card">
       <div class="license-heading">
         <input type="checkbox" class="license-check" id="checkTrackout">
-        <label for="checkTrackout">Trackout Lease</label>
+        <label for="checkTrackout">Trackout Lease · single sale</label>
       </div>
       <div class="license-fields" id="fieldsTrackout">
         <label for="priceTrackout">Price (NGN) *</label>
-        <input id="priceTrackout" type="number" min="1" step="1" placeholder="Example: 25000">
+        <input id="priceTrackout" type="number" min="1" step="1" placeholder="Example: 60000">
         <label for="fileTrackout">Trackout ZIP file *</label>
         <input id="fileTrackout" type="file" accept=".zip,.rar,.7z">
       </div>
@@ -434,7 +370,7 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <div class="license-card">
       <div class="license-heading">
         <input type="checkbox" class="license-check" id="checkExclusive">
-        <label for="checkExclusive">Exclusive Rights</label>
+        <label for="checkExclusive">Exclusive Rights · single sale, withdraws the beat</label>
       </div>
       <div class="license-fields" id="fieldsExclusive">
         <label for="priceExclusive">Price (NGN) *</label>
@@ -455,7 +391,7 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
       <div>
         <h2 style="margin:0">04 — Product Moderation &amp; Catalogue</h2>
-        <p class="hint" style="margin:6px 0 0">Review first-party and vendor submissions, approve, reject with reason, return to draft, or delete.</p>
+        <p class="hint" style="margin:6px 0 0">Review submissions, approve, reject with a reason, return to draft, or delete.</p>
       </div>
       <button class="btn btn-secondary" type="button" id="refreshProducts">Refresh</button>
     </div>
@@ -475,7 +411,7 @@ hr{border:0;border-top:1px solid var(--line);margin:25px 0}
     <h2>05 — Vendor Applications &amp; Payout Requests</h2>
     <div id="vendorApplicationsList"><div class="empty-state">Loading vendor applications...</div></div>
     <hr>
-    <h2 style="font-size:15px">Pending Withdrawal Requests</h2>
+    <h2 style="font-size:15px">Withdrawal Requests</h2>
     <div id="payoutRequestsList"><div class="empty-state">Loading payout requests...</div></div>
   </div>
 
@@ -497,6 +433,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const DOWNLOAD_BUCKET = "485-downloads";
 const PREVIEW_BUCKET = "485-previews";
 const BEAT_CATEGORY_SLUG = "beats-instrumentals";
+const PLATFORM_SETTINGS_ID = 1;
 
 let currentUser = null;
 let categories = [];
@@ -504,90 +441,95 @@ let adminVerified = false;
 let allProducts = [];
 let activeFilter = "all";
 let actionInProgress = false;
-let dashboardPromise = null;
-let dashboardUserId = null;
+let sessionPromise = null;
+let sessionUserId = null;
 
-function showStatus(id, message, type="info"){
+/* ---------- Helpers ---------- */
+function showStatus(id, message, type = "info") {
   const el = document.getElementById(id);
   el.className = "status " + type;
   el.textContent = message;
 }
-function clearStatus(id){
+function clearStatus(id) {
   const el = document.getElementById(id);
   el.className = "status";
   el.textContent = "";
 }
-function value(id){ return document.getElementById(id).value.trim(); }
-function selectedFile(id){ return document.getElementById(id).files[0] || null; }
-function newProductId(){ return crypto.randomUUID(); }
-function extension(file){
+function value(id) { return document.getElementById(id).value.trim(); }
+function selectedFile(id) { return document.getElementById(id).files[0] || null; }
+function newProductId() { return crypto.randomUUID(); }
+function extension(file) {
   const name = file?.name || "";
   const dot = name.lastIndexOf(".");
   return dot >= 0 ? name.substring(dot + 1).toLowerCase() : "bin";
 }
-function cleanPathName(name){ return name.replace(/[^a-zA-Z0-9._-]/g, "_"); }
-function makeSlug(title, id){
+function cleanPathName(name) { return name.replace(/[^a-zA-Z0-9._-]/g, "_"); }
+function makeSlug(title, id) {
   const clean = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 65);
-  return clean + "-" + id.slice(0, 8);
+  return (clean || "product") + "-" + id.slice(0, 8);
 }
-function formatMoney(kobo){ return "₦" + (Number(kobo || 0) / 100).toLocaleString("en-NG"); }
-function escapeHTML(text){
+function formatMoney(kobo) { return "₦" + (Number(kobo || 0) / 100).toLocaleString("en-NG"); }
+function escapeHTML(text) {
   return String(text ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   })[c]);
 }
-function statusBadge(status){
+function statusBadge(status) {
   const allowed = ["pending", "approved", "draft", "rejected"];
   const safe = allowed.includes(status) ? status : "unknown";
   return '<span class="badge ' + safe + '">' + safe.toUpperCase() + '</span>';
 }
-function setButtonLoading(id, loading, label){
+function setButtonLoading(id, loading, label) {
   const button = document.getElementById(id);
   button.disabled = loading;
   button.textContent = loading ? "Processing..." : label;
 }
-function validPrice(price){
+function validPrice(price) {
   return Number.isFinite(price) && price > 0 && Number.isSafeInteger(Math.round(price * 100));
 }
 
-/* AUTH */
-async function verifyAdmin(){
+/* ---------- Auth ---------- */
+async function verifyAdmin() {
   const { data, error } = await supabaseClient.rpc("is_485_admin");
   if (error) throw new Error("Administrator verification failed: " + error.message);
   if (data !== true) throw new Error("This account does not have 485 MUSIC administrator access.");
   adminVerified = true;
 }
 
-async function showDashboard(user){
+async function showDashboard(user) {
   if (!user) return;
-  if (dashboardUserId === user.id && adminVerified) return;
-  if (dashboardPromise && dashboardUserId === user.id) return dashboardPromise;
-  dashboardUserId = user.id;
+  if (sessionUserId === user.id && adminVerified) return;
+  if (sessionPromise && sessionUserId === user.id) return sessionPromise;
+  sessionUserId = user.id;
 
-  dashboardPromise = (async () => {
+  sessionPromise = (async () => {
     currentUser = user;
     try {
       await verifyAdmin();
       document.getElementById("loginSection").style.display = "none";
       document.getElementById("app").style.display = "block";
       document.getElementById("adminEmail").textContent = user.email || "";
-
       await loadCategories();
       await refreshAllStudioData();
     } catch (error) {
-      adminVerified = false;
-      currentUser = null;
-      dashboardUserId = null;
-      document.getElementById("app").style.display = "none";
-      document.getElementById("loginSection").style.display = "block";
+      resetDashboard();
       showStatus("loginStatus", error.message, "error");
       await supabaseClient.auth.signOut();
     } finally {
-      dashboardPromise = null;
+      sessionPromise = null;
     }
   })();
+  return sessionPromise;
+}
 
-  return dashboardPromise;
+function resetDashboard() {
+  currentUser = null;
+  adminVerified = false;
+  sessionUserId = null;
+  sessionPromise = null;
+  allProducts = [];
+  document.getElementById("app").style.display = "none";
+  document.getElementById("loginSection").style.display = "block";
 }
 
 document.getElementById("loginForm").addEventListener("submit", async event => {
@@ -614,57 +556,47 @@ document.getElementById("logoutButton").addEventListener("click", async () => {
   resetDashboard();
 });
 
-function resetDashboard(){
-  currentUser = null;
-  adminVerified = false;
-  dashboardUserId = null;
-  dashboardPromise = null;
-  allProducts = [];
-  document.getElementById("app").style.display = "none";
-  document.getElementById("loginSection").style.display = "block";
-}
-
 supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_IN" && session?.user) setTimeout(() => showDashboard(session.user), 0);
   if (event === "SIGNED_OUT") resetDashboard();
 });
 
-async function initialise(){
+async function initialise() {
   const { data, error } = await supabaseClient.auth.getSession();
   if (error) return showStatus("loginStatus", error.message, "error");
   if (data.session?.user) await showDashboard(data.session.user);
 }
 
-async function refreshAllStudioData(){
-  await Promise.all([
-    loadProducts(),
-    loadAnalytics(),
-    loadVendorApplications(),
-    loadPayoutRequests()
-  ]);
+async function refreshAllStudioData() {
+  await Promise.all([loadProducts(), loadAnalytics(), loadVendorApplications(), loadPayoutRequests()]);
 }
-
 document.getElementById("refreshAllBtn").addEventListener("click", refreshAllStudioData);
+document.getElementById("refreshProducts").addEventListener("click", loadProducts);
 
-/* ANALYTICS & COMMISSION RATE */
-async function loadAnalytics(){
-  const [vendorsRes, ordersRes, txRes, commRes, settingsRes] = await Promise.all([
+/* ---------- Analytics & commission rate (platform_settings id = 1) ---------- */
+async function loadAnalytics() {
+  const [vendorsRes, ordersRes, txRes, commRes, settingsRes, payoutRes] = await Promise.all([
     supabaseClient.from("vendor_profiles").select("id", { count: "exact", head: true }).eq("is_active", true),
-    supabaseClient.from("orders").select("id,total_kobo,status").eq("status", "paid"),
-    supabaseClient.from("payment_transactions").select("reference,amount_kobo,status,created_at").order("created_at", { ascending: false }).limit(8),
-    supabaseClient.from("commission_records").select("commission_kobo"),
-    supabaseClient.from("platform_settings").select("commission_rate_bps").eq("id", "default").maybeSingle()
+    supabaseClient.from("orders").select("total_kobo").eq("status", "paid"),
+    supabaseClient.from("payment_transactions").select("provider_reference,amount_kobo,status,created_at").order("created_at", { ascending: false }).limit(8),
+    supabaseClient.from("commission_records").select("commission_kobo,vendor_kobo,status"),
+    supabaseClient.from("platform_settings").select("commission_rate_bps").eq("id", PLATFORM_SETTINGS_ID).maybeSingle(),
+    supabaseClient.from("payout_requests").select("amount_kobo").eq("status", "pending")
   ]);
+
+  const errors = [vendorsRes, ordersRes, txRes, commRes, settingsRes, payoutRes].filter(r => r.error).map(r => r.error.message);
+  if (errors.length) showStatus("uploadStatus", "Some analytics could not be loaded: " + errors[0], "error");
 
   document.getElementById("vendorsCount").textContent = String(vendorsRes.count ?? 0);
 
   const paidOrders = ordersRes.data || [];
   document.getElementById("ordersCount").textContent = String(paidOrders.length);
-  const grossKobo = paidOrders.reduce((s, o) => s + Number(o.total_kobo || 0), 0);
-  document.getElementById("revenueAmount").textContent = formatMoney(grossKobo);
+  document.getElementById("revenueAmount").textContent = formatMoney(paidOrders.reduce((s, o) => s + Number(o.total_kobo || 0), 0));
 
-  const commKobo = (commRes.data || []).reduce((s, c) => s + Number(c.commission_kobo || 0), 0);
-  document.getElementById("commissionsAmount").textContent = formatMoney(commKobo);
+  const commissions = (commRes.data || []).filter(c => c.status !== "reversed");
+  document.getElementById("commissionsAmount").textContent = formatMoney(commissions.reduce((s, c) => s + Number(c.commission_kobo || 0), 0));
+
+  document.getElementById("pendingPayoutsAmount").textContent = formatMoney((payoutRes.data || []).reduce((s, p) => s + Number(p.amount_kobo || 0), 0));
 
   if (settingsRes.data && document.activeElement !== document.getElementById("commissionRateInput")) {
     document.getElementById("commissionRateInput").value = String(settingsRes.data.commission_rate_bps ?? 1500);
@@ -672,27 +604,25 @@ async function loadAnalytics(){
 
   const txs = txRes.data || [];
   document.getElementById("recentTransactionsList").innerHTML = txs.length
-    ? txs.map(t => `${escapeHTML(t.reference)} · ${formatMoney(t.amount_kobo)} · <strong>${escapeHTML(String(t.status || "").toUpperCase())}</strong> · ${new Date(t.created_at).toLocaleDateString()}`).join("<br>")
+    ? txs.map(t => `<div class="tx-line">${escapeHTML(t.provider_reference)} · ${formatMoney(t.amount_kobo)} · <strong>${escapeHTML(String(t.status || "").toUpperCase())}</strong> · ${new Date(t.created_at).toLocaleDateString()}</div>`).join("")
     : "No payment transactions recorded yet.";
 }
 
 document.getElementById("saveCommissionBtn").addEventListener("click", async () => {
   const bps = Number(document.getElementById("commissionRateInput").value);
   if (!Number.isInteger(bps) || bps < 0 || bps > 10000) {
-    return showStatus("uploadStatus", "Commission rate must be an integer between 0 and 10000 basis points.", "error");
+    return showStatus("uploadStatus", "Commission rate must be a whole number from 0 to 10000 basis points.", "error");
   }
-  const { error } = await supabaseClient.from("platform_settings").upsert({
-    id: "default",
-    commission_rate_bps: bps,
-    updated_by: currentUser.id,
-    updated_at: new Date().toISOString()
-  });
+  const { error } = await supabaseClient.from("platform_settings")
+    .update({ commission_rate_bps: bps, updated_at: new Date().toISOString() })
+    .eq("id", PLATFORM_SETTINGS_ID);
   if (error) return showStatus("uploadStatus", "Could not update commission rate: " + error.message, "error");
-  showStatus("uploadStatus", `Platform commission rate updated to ${(bps / 100).toFixed(2)}%.`, "success");
+  showStatus("uploadStatus", `Platform commission rate updated to ${(bps / 100).toFixed(2)}%. New sales use this rate.`, "success");
+  await loadAnalytics();
 });
 
-/* CATEGORIES & TOGGLE */
-async function loadCategories(){
+/* ---------- Categories & form switching ---------- */
+async function loadCategories() {
   const { data, error } = await supabaseClient.from("product_categories").select("id,name,slug").order("name");
   if (error) throw new Error("Could not load product categories: " + error.message);
   categories = data || [];
@@ -705,7 +635,7 @@ async function loadCategories(){
     select.appendChild(opt);
   });
   if (!categories.some(c => c.slug === BEAT_CATEGORY_SLUG)) {
-    throw new Error("The Beats & Instrumentals category could not be found. Check its database slug.");
+    throw new Error("The Beats & Instrumentals category could not be found. Check its slug is " + BEAT_CATEGORY_SLUG + ".");
   }
 }
 
@@ -718,12 +648,12 @@ document.querySelectorAll('input[name="productMode"]').forEach(input => {
   });
 });
 
-/* LICENCE CONTROLS */
+/* ---------- Licence controls ---------- */
 const licenceControls = [
-  { type:"mp3_lease", checkbox:"checkMp3", fields:"fieldsMp3", price:"priceMp3", file:"fileMp3", role:"mp3" },
-  { type:"wav_lease", checkbox:"checkWav", fields:"fieldsWav", price:"priceWav", file:"fileWav", role:"wav" },
-  { type:"trackout_lease", checkbox:"checkTrackout", fields:"fieldsTrackout", price:"priceTrackout", file:"fileTrackout", role:"trackouts" },
-  { type:"exclusive", checkbox:"checkExclusive", fields:"fieldsExclusive", price:"priceExclusive", file:"fileExclusive", role:"wav" }
+  { type: "mp3_lease", checkbox: "checkMp3", fields: "fieldsMp3", price: "priceMp3", file: "fileMp3", role: "mp3" },
+  { type: "wav_lease", checkbox: "checkWav", fields: "fieldsWav", price: "priceWav", file: "fileWav", role: "wav" },
+  { type: "trackout_lease", checkbox: "checkTrackout", fields: "fieldsTrackout", price: "priceTrackout", file: "fileTrackout", role: "trackouts" },
+  { type: "exclusive", checkbox: "checkExclusive", fields: "fieldsExclusive", price: "priceExclusive", file: "fileExclusive", role: "wav" }
 ];
 
 licenceControls.forEach(item => {
@@ -735,10 +665,21 @@ licenceControls.forEach(item => {
   });
 });
 
-function getSelectedLicences(){ return licenceControls.filter(item => document.getElementById(item.checkbox).checked); }
+function getSelectedLicences() {
+  return licenceControls.filter(item => document.getElementById(item.checkbox).checked);
+}
 
-/* STORAGE HELPERS */
-async function uploadPrivateFile(bucket, path, file){
+function resetLicenceControls() {
+  licenceControls.forEach(item => {
+    document.getElementById(item.checkbox).checked = false;
+    document.getElementById(item.fields).classList.remove("active");
+    document.getElementById(item.price).required = false;
+    document.getElementById(item.file).required = false;
+  });
+}
+
+/* ---------- Storage helpers (all files private) ---------- */
+async function uploadPrivateFile(bucket, path, file) {
   if (!file) return null;
   if (!currentUser || !adminVerified) throw new Error("Administrator authentication is required.");
   const { data, error } = await supabaseClient.storage.from(bucket).upload(path, file, {
@@ -748,32 +689,33 @@ async function uploadPrivateFile(bucket, path, file){
   return data.path;
 }
 
-async function uploadProductFile(bucket, userId, productId, folder, file){
+async function uploadProductFile(bucket, productId, folder, file) {
   if (!file) return null;
-  return uploadPrivateFile(bucket, userId + "/" + productId + "/" + folder + "/" + Date.now() + "-" + cleanPathName(file.name), file);
+  const path = currentUser.id + "/" + productId + "/" + folder + "/" + Date.now() + "-" + cleanPathName(file.name);
+  return uploadPrivateFile(bucket, path, file);
 }
 
-async function removeUploadedFiles(bucket, paths){
+async function removeUploadedFiles(bucket, paths) {
   const valid = [...new Set(paths.filter(Boolean))];
   if (!valid.length) return;
   const { error } = await supabaseClient.storage.from(bucket).remove(valid);
   if (error) console.warn("Storage cleanup failed:", error.message);
 }
 
-async function verifyPrivateObject(bucket, path){
+async function verifyPrivateObject(bucket, path) {
   if (!path || typeof path !== "string") return false;
   const { data, error } = await supabaseClient.storage.from(bucket).createSignedUrl(path, 60);
   return !error && !!data?.signedUrl;
 }
 
-async function getPreviewSignedUrl(path){
+async function getPreviewSignedUrl(path) {
   if (!path) return null;
   const { data, error } = await supabaseClient.storage.from(PREVIEW_BUCKET).createSignedUrl(path, 3600);
   if (error) throw error;
   return data?.signedUrl || null;
 }
 
-function setCoverPlaceholder(container, message){
+function setCoverPlaceholder(container, message) {
   if (!container) return;
   container.innerHTML = "";
   const placeholder = document.createElement("div");
@@ -782,14 +724,13 @@ function setCoverPlaceholder(container, message){
   container.appendChild(placeholder);
 }
 
-async function loadCoverInto(container, path){
+async function loadCoverInto(container, path) {
   if (!container) return;
   if (!path) return setCoverPlaceholder(container, "No cover artwork");
   setCoverPlaceholder(container, "Loading artwork...");
   try {
     const signedUrl = await getPreviewSignedUrl(path);
-    if (!signedUrl) return setCoverPlaceholder(container, "Cover unavailable");
-    if (!container.isConnected) return;
+    if (!signedUrl || !container.isConnected) return setCoverPlaceholder(container, "Cover unavailable");
     const image = document.createElement("img");
     image.alt = "Product cover artwork";
     image.loading = "lazy";
@@ -802,7 +743,7 @@ async function loadCoverInto(container, path){
   }
 }
 
-/* DIGITAL PRODUCT UPLOAD */
+/* ---------- Digital product upload ---------- */
 document.getElementById("digitalForm").addEventListener("submit", async event => {
   event.preventDefault();
   clearStatus("uploadStatus");
@@ -820,24 +761,25 @@ document.getElementById("digitalForm").addEventListener("submit", async event =>
     return showStatus("uploadStatus", "Complete all required details and enter a valid price and download file.", "error");
   }
 
-  const buttonText = "Upload Digital Product";
-  setButtonLoading("digitalSubmit", true, buttonText);
+  setButtonLoading("digitalSubmit", true, "Upload Digital Product");
   const productId = newProductId();
-  const previewPaths = [], downloadPaths = [];
+  const uploaded = [];
   let productCreated = false;
 
   try {
     showStatus("uploadStatus", "Uploading product files...", "info");
-    let coverPath = null, previewPath = null;
-    if (cover) { coverPath = await uploadProductFile(PREVIEW_BUCKET, currentUser.id, productId, "cover", cover); previewPaths.push(coverPath); }
-    if (preview) { previewPath = await uploadProductFile(PREVIEW_BUCKET, currentUser.id, productId, "preview", preview); previewPaths.push(previewPath); }
-    const downloadPath = await uploadProductFile(DOWNLOAD_BUCKET, currentUser.id, productId, "downloads", download);
-    downloadPaths.push(downloadPath);
+    const coverPath = await uploadProductFile(PREVIEW_BUCKET, productId, "cover", cover);
+    if (coverPath) uploaded.push([PREVIEW_BUCKET, coverPath]);
+    const previewPath = await uploadProductFile(PREVIEW_BUCKET, productId, "preview", preview);
+    if (previewPath) uploaded.push([PREVIEW_BUCKET, previewPath]);
+    const downloadPath = await uploadProductFile(DOWNLOAD_BUCKET, productId, "downloads", download);
+    uploaded.push([DOWNLOAD_BUCKET, downloadPath]);
 
     const { error } = await supabaseClient.from("products").insert({
       id: productId,
       producer_id: currentUser.id,
       is_platform_owned: true,
+      vendor_id: null,
       category_id: categoryId,
       title,
       slug: makeSlug(title, productId),
@@ -852,21 +794,29 @@ document.getElementById("digitalForm").addEventListener("submit", async event =>
     });
     if (error) throw error;
     productCreated = true;
+
     document.getElementById("digitalForm").reset();
-    showStatus("uploadStatus", "Digital product uploaded successfully and submitted for approval.", "success");
+    showStatus("uploadStatus", "Digital product uploaded and submitted for approval.", "success");
     await Promise.all([loadProducts(), loadAnalytics()]);
   } catch (error) {
-    if (!productCreated) {
-      await removeUploadedFiles(PREVIEW_BUCKET, previewPaths);
-      await removeUploadedFiles(DOWNLOAD_BUCKET, downloadPaths);
-    }
+    if (!productCreated) await cleanupUploads(uploaded);
     showStatus("uploadStatus", "Digital product upload failed.\n\n" + error.message, "error");
   } finally {
-    setButtonLoading("digitalSubmit", false, buttonText);
+    setButtonLoading("digitalSubmit", false, "Upload Digital Product");
   }
 });
 
-/* BEAT UPLOAD */
+async function cleanupUploads(pairs) {
+  const byBucket = {};
+  for (const [bucket, path] of pairs) {
+    (byBucket[bucket] ||= []).push(path);
+  }
+  for (const [bucket, paths] of Object.entries(byBucket)) {
+    await removeUploadedFiles(bucket, paths);
+  }
+}
+
+/* ---------- Beat upload (single insert with final status) ---------- */
 document.getElementById("beatForm").addEventListener("submit", async event => {
   event.preventDefault();
   clearStatus("uploadStatus");
@@ -884,44 +834,46 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
   const selectedLicences = getSelectedLicences();
 
   if (!title || !description) return showStatus("uploadStatus", "Enter a beat title and description.", "error");
-  if (bpm !== null && (!Number.isInteger(bpm) || bpm < 1 || bpm > 300)) return showStatus("uploadStatus", "BPM must be between 1 and 300.", "error");
-  if (!selectedLicences.length) return showStatus("uploadStatus", "Select at least one licence before uploading this beat.", "error");
+  if (bpm !== null && (!Number.isInteger(bpm) || bpm < 1 || bpm > 300)) return showStatus("uploadStatus", "BPM must be a whole number from 1 to 300.", "error");
+  if (!selectedLicences.length) return showStatus("uploadStatus", "Select at least one licence.", "error");
 
   const licenceData = [];
   for (const licence of selectedLicences) {
     const price = Number(value(licence.price));
     const file = selectedFile(licence.file);
-    if (!validPrice(price) || !file) return showStatus("uploadStatus", "Every selected licence needs a valid price and its required file.", "error");
+    if (!validPrice(price) || !file) {
+      return showStatus("uploadStatus", "Every selected licence needs a valid price and its required file.", "error");
+    }
     licenceData.push({ ...licence, price, file });
   }
-  const agreement = selectedLicences.some(i => i.type === "exclusive") ? selectedFile("fileAgreement") : null;
+  const agreement = licenceData.some(i => i.type === "exclusive") ? selectedFile("fileAgreement") : null;
 
-  const buttonText = "Upload Beat & Licences";
-  setButtonLoading("beatSubmit", true, buttonText);
+  const beatCategory = categories.find(c => c.slug === BEAT_CATEGORY_SLUG);
+  if (!beatCategory) return showStatus("uploadStatus", "Beats & Instrumentals category was not found.", "error");
+
+  setButtonLoading("beatSubmit", true, "Upload Beat & Licences");
   const productId = newProductId();
-  const previewPaths = [], downloadPaths = [];
+  const uploaded = [];
   let productCreated = false;
 
   try {
     showStatus("uploadStatus", "Uploading beat files...", "info");
-    const beatCategory = categories.find(i => i.slug === BEAT_CATEGORY_SLUG);
-    if (!beatCategory) throw new Error("Beats & Instrumentals category was not found.");
+    const coverPath = await uploadProductFile(PREVIEW_BUCKET, productId, "cover", cover);
+    if (coverPath) uploaded.push([PREVIEW_BUCKET, coverPath]);
+    const previewPath = await uploadProductFile(PREVIEW_BUCKET, productId, "preview", preview);
+    if (previewPath) uploaded.push([PREVIEW_BUCKET, previewPath]);
 
-    let coverPath = null, previewPath = null;
-    if (cover) { coverPath = await uploadProductFile(PREVIEW_BUCKET, currentUser.id, productId, "cover", cover); previewPaths.push(coverPath); }
-    if (preview) { previewPath = await uploadProductFile(PREVIEW_BUCKET, currentUser.id, productId, "preview", preview); previewPaths.push(previewPath); }
-
-    const uploadedLicenceFiles = [];
-    for (const licence of licenceData) {
-      const path = await uploadProductFile(DOWNLOAD_BUCKET, currentUser.id, productId, "licences", licence.file);
-      downloadPaths.push(path);
-      uploadedLicenceFiles.push({ type: licence.type, path, role: licence.role, format: extension(licence.file) });
+    const licenceFiles = [];
+    for (const item of licenceData) {
+      const path = await uploadProductFile(DOWNLOAD_BUCKET, productId, "licences", item.file);
+      uploaded.push([DOWNLOAD_BUCKET, path]);
+      licenceFiles.push({ type: item.type, role: item.role, format: extension(item.file), path });
     }
 
     let agreementPath = null;
     if (agreement) {
-      agreementPath = await uploadProductFile(DOWNLOAD_BUCKET, currentUser.id, productId, "licences", agreement);
-      downloadPaths.push(agreementPath);
+      agreementPath = await uploadProductFile(DOWNLOAD_BUCKET, productId, "licences", agreement);
+      uploaded.push([DOWNLOAD_BUCKET, agreementPath]);
     }
 
     const lowestPrice = Math.min(...licenceData.map(i => i.price));
@@ -929,6 +881,7 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
       id: productId,
       producer_id: currentUser.id,
       is_platform_owned: true,
+      vendor_id: null,
       category_id: beatCategory.id,
       title,
       slug: makeSlug(title, productId),
@@ -939,7 +892,7 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
       preview_audio_path: previewPath,
       download_file_path: null,
       product_type: "beat",
-      status: "draft"
+      status: "pending"
     });
     if (productError) throw productError;
     productCreated = true;
@@ -950,10 +903,10 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
     if (detailsError) throw detailsError;
 
     const descriptions = {
-      mp3_lease: "MP3 lease licence. Includes the MP3 instrumental file.",
-      wav_lease: "WAV lease licence. Includes the WAV instrumental file.",
-      trackout_lease: "Trackout lease licence. Includes the trackout package.",
-      exclusive: "Exclusive rights licence. Includes the exclusive WAV file."
+      mp3_lease: "MP3 lease. Includes the MP3 instrumental file.",
+      wav_lease: "WAV lease. Includes the WAV instrumental file.",
+      trackout_lease: "Trackout lease. Includes the trackout package.",
+      exclusive: "Exclusive rights. Includes the exclusive WAV file."
     };
 
     for (const item of licenceData) {
@@ -971,8 +924,8 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
         .single();
       if (licenceError) throw licenceError;
 
-      const fileRecord = uploadedLicenceFiles.find(f => f.type === item.type);
-      const rows = [{ license_id: licenceRecord.id, file_role: fileRecord.role, file_format: fileRecord.format, file_path: fileRecord.path }];
+      const file = licenceFiles.find(f => f.type === item.type);
+      const rows = [{ license_id: licenceRecord.id, file_role: file.role, file_format: file.format, file_path: file.path }];
       if (item.type === "exclusive" && agreementPath) {
         rows.push({ license_id: licenceRecord.id, file_role: "agreement", file_format: extension(agreement), file_path: agreementPath });
       }
@@ -980,39 +933,32 @@ document.getElementById("beatForm").addEventListener("submit", async event => {
       if (fileError) throw fileError;
     }
 
-    const { error: pendingError } = await supabaseClient.from("products").update({ status: "pending" }).eq("id", productId).eq("status", "draft");
-    if (pendingError) throw pendingError;
-
     document.getElementById("beatForm").reset();
-    licenceControls.forEach(item => {
-      document.getElementById(item.fields).classList.remove("active");
-      document.getElementById(item.price).required = false;
-      document.getElementById(item.file).required = false;
-    });
-
-    showStatus("uploadStatus", "Beat uploaded successfully. Status: PENDING APPROVAL.", "success");
+    resetLicenceControls();
+    showStatus("uploadStatus", "Beat uploaded and submitted for approval.", "success");
     await Promise.all([loadProducts(), loadAnalytics()]);
   } catch (error) {
-    if (!productCreated) {
-      await removeUploadedFiles(PREVIEW_BUCKET, previewPaths);
-      await removeUploadedFiles(DOWNLOAD_BUCKET, downloadPaths);
+    if (productCreated) {
+      showStatus("uploadStatus", "The beat was saved but a related record failed:\n\n" + error.message + "\n\nOpen the product below and check its licences before approving.", "error");
+    } else {
+      await cleanupUploads(uploaded);
+      showStatus("uploadStatus", "Beat upload was not completed.\n\n" + error.message, "error");
     }
-    showStatus("uploadStatus", "Beat upload was not completed.\n\n" + error.message, "error");
     await loadProducts();
   } finally {
-    setButtonLoading("beatSubmit", false, buttonText);
+    setButtonLoading("beatSubmit", false, "Upload Beat & Licences");
   }
 });
 
-/* PRODUCT MANAGEMENT & MODERATION */
-async function loadProducts(){
+/* ---------- Product moderation ---------- */
+async function loadProducts() {
   const list = document.getElementById("productList");
   list.innerHTML = '<div class="empty-state">Loading products...</div>';
   if (!adminVerified) return;
 
   const { data, error } = await supabaseClient
     .from("products")
-    .select("id,title,description,product_type,status,rejection_reason,reviewed_at,is_platform_owned,vendor_id,price_kobo,currency,created_at,producer_id,download_file_path,cover_image_path,preview_audio_path,category_id,vendor_profiles(stage_name)")
+    .select("id,title,description,product_type,status,rejection_reason,reviewed_at,is_platform_owned,vendor_id,price_kobo,created_at,producer_id,download_file_path,cover_image_path,preview_audio_path,category_id")
     .order("created_at", { ascending: false })
     .limit(200);
 
@@ -1026,17 +972,19 @@ async function loadProducts(){
   renderProducts();
 }
 
-function updateDashboardCounts(){
+function updateDashboardCounts() {
+  const count = s => allProducts.filter(p => p.status === s).length;
   document.getElementById("totalProductsCount").textContent = allProducts.length;
-  document.getElementById("pendingCount").textContent = allProducts.filter(p => p.status === "pending").length;
-  document.getElementById("approvedCount").textContent = allProducts.filter(p => p.status === "approved").length;
-  document.getElementById("rejectedCount").textContent = allProducts.filter(p => p.status === "rejected").length;
-  document.getElementById("draftCount").textContent = allProducts.filter(p => p.status === "draft").length;
+  document.getElementById("pendingCount").textContent = count("pending");
+  document.getElementById("approvedCount").textContent = count("approved");
+  document.getElementById("rejectedCount").textContent = count("rejected");
+  document.getElementById("draftCount").textContent = count("draft");
 }
 
-function renderProducts(){
+function renderProducts() {
   const list = document.getElementById("productList");
-  const products = activeFilter === "all" ? allProducts : allProducts.filter(item => item.status === activeFilter);
+  document.querySelectorAll(".filter-button").forEach(b => b.classList.toggle("active", b.dataset.filter === activeFilter));
+  const products = activeFilter === "all" ? allProducts : allProducts.filter(p => p.status === activeFilter);
 
   if (!products.length) {
     list.innerHTML = '<div class="empty-state">No products in this section.</div>';
@@ -1060,17 +1008,14 @@ function renderProducts(){
     title.className = "product-title";
     title.textContent = product.title || "Untitled product";
 
-    const ownerLabel = product.vendor_profiles?.stage_name
-      ? `Vendor: ${product.vendor_profiles.stage_name}`
-      : (product.is_platform_owned === false ? "Vendor Product" : "485 First-Party");
-
+    const owner = product.vendor_id ? "Vendor product" : "485 first-party";
     const meta = document.createElement("div");
     meta.className = "product-meta";
     meta.textContent =
       (product.product_type === "beat" ? "Beat / Instrumental" : "Digital Product") +
-      " · " + ownerLabel +
+      " · " + owner +
       " · " + formatMoney(product.price_kobo) +
-      " · Submitted " + (product.created_at ? new Date(product.created_at).toLocaleDateString() : "Unknown date");
+      " · Submitted " + (product.created_at ? new Date(product.created_at).toLocaleDateString() : "unknown date");
 
     info.append(title, meta);
     info.insertAdjacentHTML("beforeend", statusBadge(product.status));
@@ -1096,32 +1041,29 @@ function renderProducts(){
 
 document.querySelectorAll(".filter-button").forEach(button => {
   button.addEventListener("click", () => {
-    document.querySelectorAll(".filter-button").forEach(item => item.classList.remove("active"));
-    button.classList.add("active");
     activeFilter = button.dataset.filter;
     renderProducts();
   });
 });
 
-document.getElementById("refreshProducts").addEventListener("click", refreshAllStudioData);
-
-function detailItem(label, text){
+function detailItem(label, text) {
   return '<div class="detail-item"><strong>' + escapeHTML(label) + '</strong><span>' + escapeHTML(text) + '</span></div>';
 }
-function licenceName(type){
-  return ({ mp3_lease:"MP3 Lease", wav_lease:"WAV Lease", trackout_lease:"Trackout Lease", exclusive:"Exclusive Rights" })[type] || type || "Unknown";
+function licenceName(type) {
+  return ({ mp3_lease: "MP3 Lease", wav_lease: "WAV Lease", trackout_lease: "Trackout Lease", exclusive: "Exclusive Rights" })[type] || type || "Unknown";
 }
-function expectedFileRole(type){
-  return ({ mp3_lease:"mp3", wav_lease:"wav", trackout_lease:"trackouts", exclusive:"wav" })[type] || null;
+function expectedFileRole(type) {
+  return ({ mp3_lease: "mp3", wav_lease: "wav", trackout_lease: "trackouts", exclusive: "wav" })[type] || null;
 }
 
-async function inspectProductForApproval(product){
+/* Advisory check in the browser. The server-side finalisation and the status rules are the real gate. */
+async function inspectProductForApproval(product) {
   if (product.product_type !== "beat") {
     if (!product.download_file_path) return { ok: false, reason: "The private digital download path is missing." };
     const exists = await verifyPrivateObject(DOWNLOAD_BUCKET, product.download_file_path);
     return exists
-      ? { ok: true, reason: "The private digital download file is present and accessible." }
-      : { ok: false, reason: "The private digital download file could not be verified in storage." };
+      ? { ok: true, reason: "The private download file is present." }
+      : { ok: false, reason: "The private download file could not be found in storage." };
   }
 
   const { data: beat, error: beatError } = await supabaseClient.from("beat_details").select("bpm").eq("product_id", product.id).maybeSingle();
@@ -1130,7 +1072,7 @@ async function inspectProductForApproval(product){
 
   const { data: licences, error: licenceError } = await supabaseClient.from("product_licenses").select("id,license_type").eq("product_id", product.id).eq("is_active", true);
   if (licenceError) throw new Error("Could not load licences: " + licenceError.message);
-  if (!licences?.length) return { ok: false, reason: "No active beat licences were found." };
+  if (!licences?.length) return { ok: false, reason: "No active licences were found." };
 
   for (const licence of licences) {
     const requiredRole = expectedFileRole(licence.license_type);
@@ -1138,15 +1080,15 @@ async function inspectProductForApproval(product){
     const { data: files, error: fileError } = await supabaseClient.from("product_license_files").select("file_role,file_path").eq("license_id", licence.id);
     if (fileError) throw new Error("Could not check licence files: " + fileError.message);
     const reqFile = (files || []).find(f => f.file_role === requiredRole && !!f.file_path);
-    if (!reqFile) return { ok: false, reason: licenceName(licence.license_type) + " is missing its required " + requiredRole.toUpperCase() + " file." };
+    if (!reqFile) return { ok: false, reason: licenceName(licence.license_type) + " is missing its " + requiredRole.toUpperCase() + " file." };
     const exists = await verifyPrivateObject(DOWNLOAD_BUCKET, reqFile.file_path);
-    if (!exists) return { ok: false, reason: "Private " + requiredRole.toUpperCase() + " file for " + licenceName(licence.license_type) + " could not be verified." };
+    if (!exists) return { ok: false, reason: "The " + requiredRole.toUpperCase() + " file for " + licenceName(licence.license_type) + " could not be found in storage." };
   }
 
-  return { ok: true, reason: "Beat metadata, active licences and required private files passed verification." };
+  return { ok: true, reason: "Beat metadata, active licences and private files passed checks." };
 }
 
-async function toggleReview(productId, card, button){
+async function toggleReview(productId, card, button) {
   const panel = card.querySelector(".product-details");
   if (panel.classList.contains("open")) {
     panel.classList.remove("open");
@@ -1156,31 +1098,32 @@ async function toggleReview(productId, card, button){
 
   panel.classList.add("open");
   button.textContent = "Hide Details";
-  panel.innerHTML = '<div class="hint">Loading product details and verifying private files...</div>';
+  panel.innerHTML = '<div class="hint">Loading details and verifying private files...</div>';
 
-  const product = allProducts.find(item => item.id === productId);
+  const product = allProducts.find(p => p.id === productId);
   if (!product) return;
 
   try {
-    let html = '<div class="review-cover" id="reviewCover"></div>';
-    html += '<div class="detail-grid">';
+    let html = '<div class="review-cover" id="reviewCover"></div><div class="detail-grid">';
     html += detailItem("Description", product.description || "No description");
-    html += detailItem("Product Type", product.product_type || "Unknown");
+    html += detailItem("Product type", product.product_type || "Unknown");
     html += detailItem("Status", product.status || "Unknown");
     html += detailItem("Price", formatMoney(product.price_kobo));
-    if (product.rejection_reason) html += detailItem("Rejection Reason", product.rejection_reason);
-    html += '</div>';
+    if (product.rejection_reason) html += detailItem("Rejection reason", product.rejection_reason);
+    html += "</div>";
 
     if (product.product_type === "beat") {
       const { data: beat } = await supabaseClient.from("beat_details").select("bpm,musical_key,genre,mood").eq("product_id", productId).maybeSingle();
-      html += '<h3 style="font-size:14px;margin:14px 0 8px;color:var(--gold-light)">Beat Metadata</h3><div class="detail-grid">';
+      html += '<h3 style="font-size:14px;margin:14px 0 8px;color:var(--gold-light)">Beat metadata</h3><div class="detail-grid">';
       html += detailItem("BPM", beat?.bpm ?? "N/A") + detailItem("Key", beat?.musical_key || "N/A") + detailItem("Genre", beat?.genre || "N/A") + detailItem("Mood", beat?.mood || "N/A");
-      html += '</div>';
+      html += "</div>";
 
-      const { data: licences } = await supabaseClient.from("product_licenses").select("id,license_type,price_kobo,is_active").eq("product_id", productId).order("price_kobo");
+      const { data: licences } = await supabaseClient.from("product_licenses").select("id,license_type,price_kobo,is_active,max_sales,sold_count").eq("product_id", productId).order("price_kobo");
       for (const lic of licences || []) {
         const { data: files } = await supabaseClient.from("product_license_files").select("file_role,file_format").eq("license_id", lic.id);
-        html += `<div class="license-review"><strong>${escapeHTML(licenceName(lic.license_type))}</strong><div class="product-meta">Price: ${formatMoney(lic.price_kobo)} · Files: ${(files||[]).map(f => escapeHTML(f.file_role)+" ("+escapeHTML(f.file_format)+")").join(", ") || "None"}</div></div>`;
+        const sales = lic.max_sales === null ? `${lic.sold_count} sold (unlimited)` : `${lic.sold_count} of ${lic.max_sales} sold`;
+        const fileList = (files || []).map(f => `${escapeHTML(f.file_role)} (${escapeHTML(f.file_format)})`).join(", ") || "None";
+        html += `<div class="license-review"><strong>${escapeHTML(licenceName(lic.license_type))}</strong>${lic.is_active ? "" : " · WITHDRAWN"}<div class="product-meta">Price: ${formatMoney(lic.price_kobo)} · ${sales} · Files: ${fileList}</div></div>`;
       }
     } else {
       const exists = product.download_file_path ? await verifyPrivateObject(DOWNLOAD_BUCKET, product.download_file_path) : false;
@@ -1189,12 +1132,12 @@ async function toggleReview(productId, card, button){
         : '<div class="review-warning">Private download file missing or inaccessible.</div>';
     }
 
-    let approvalValidation = null;
+    let check = null;
     if (product.status === "pending") {
-      approvalValidation = await inspectProductForApproval(product);
-      html += approvalValidation.ok
-        ? '<div class="review-success">Approval checks passed. ' + escapeHTML(approvalValidation.reason) + '</div>'
-        : '<div class="review-warning">Approval blocked: ' + escapeHTML(approvalValidation.reason) + '</div>';
+      check = await inspectProductForApproval(product);
+      html += check.ok
+        ? '<div class="review-success">Approval checks passed. ' + escapeHTML(check.reason) + '</div>'
+        : '<div class="review-warning">Approval blocked: ' + escapeHTML(check.reason) + '</div>';
     }
 
     html += '<div class="product-actions" id="reviewActions"></div>';
@@ -1207,7 +1150,7 @@ async function toggleReview(productId, card, button){
       const approve = document.createElement("button");
       approve.className = "btn btn-success";
       approve.textContent = "Approve & Publish";
-      approve.disabled = !approvalValidation?.ok;
+      approve.disabled = !check?.ok;
       approve.addEventListener("click", () => changeProductStatus(product, "approved", approve, null));
       actions.appendChild(approve);
 
@@ -1215,20 +1158,14 @@ async function toggleReview(productId, card, button){
       rejectBtn.className = "btn btn-danger";
       rejectBtn.textContent = "Reject Submission";
       rejectBtn.addEventListener("click", () => {
-        const reason = prompt(`Enter rejection reason for "${product.title}":`);
-        if (!reason || !reason.trim()) return alert("A rejection reason is required.");
-        changeProductStatus(product, "rejected", rejectBtn, reason.trim());
+        const reason = (prompt(`Enter the rejection reason for "${product.title}":`) || "").trim();
+        if (!reason) return alert("A rejection reason is required.");
+        changeProductStatus(product, "rejected", rejectBtn, reason);
       });
       actions.appendChild(rejectBtn);
-
-      const draftBtn = document.createElement("button");
-      draftBtn.className = "btn btn-secondary";
-      draftBtn.textContent = "Return to Draft";
-      draftBtn.addEventListener("click", () => changeProductStatus(product, "draft", draftBtn, null));
-      actions.appendChild(draftBtn);
     }
 
-    if (product.status === "approved" || product.status === "rejected") {
+    if (product.status === "approved" || product.status === "rejected" || product.status === "pending") {
       const draftBtn = document.createElement("button");
       draftBtn.className = "btn btn-secondary";
       draftBtn.textContent = "Return to Draft";
@@ -1246,7 +1183,7 @@ async function toggleReview(productId, card, button){
   }
 }
 
-async function changeProductStatus(product, newStatus, button, rejectionReason){
+async function changeProductStatus(product, newStatus, button, rejectionReason) {
   if (!adminVerified || !currentUser || actionInProgress) return;
   if (!["approved", "rejected", "draft"].includes(newStatus)) return;
 
@@ -1257,34 +1194,38 @@ async function changeProductStatus(product, newStatus, button, rejectionReason){
 
   try {
     const { data: current, error: readError } = await supabaseClient
-      .from("products")
-      .select("id,status,product_type,download_file_path")
-      .eq("id", product.id)
-      .single();
+      .from("products").select("id,status,product_type,download_file_path").eq("id", product.id).single();
     if (readError) throw readError;
 
     if (newStatus === "approved") {
-      const v = await inspectProductForApproval(current);
-      if (!v.ok) throw new Error(v.reason);
+      const check = await inspectProductForApproval(current);
+      if (!check.ok) throw new Error(check.reason);
     }
 
-    const patch = {
-      status: newStatus,
-      reviewed_by: currentUser.id,
-      reviewed_at: new Date().toISOString(),
-      rejection_reason: newStatus === "rejected" ? rejectionReason : null
-    };
-
-    const { error: updErr } = await supabaseClient.from("products").update(patch).eq("id", product.id).eq("status", current.status);
+    const now = new Date().toISOString();
+    const { data: updated, error: updErr } = await supabaseClient
+      .from("products")
+      .update({
+        status: newStatus,
+        reviewed_by: currentUser.id,
+        reviewed_at: now,
+        rejection_reason: newStatus === "rejected" ? rejectionReason : null
+      })
+      .eq("id", product.id)
+      .eq("status", current.status)
+      .select("id")
+      .maybeSingle();
     if (updErr) throw updErr;
+    if (!updated) throw new Error("The product changed while you were reviewing it. Refresh and try again.");
 
-    await supabaseClient.from("product_moderation_history").insert({
+    const { error: histErr } = await supabaseClient.from("product_moderation_history").insert({
       product_id: product.id,
       actor_id: currentUser.id,
       previous_status: current.status,
       new_status: newStatus,
       reason: rejectionReason
     });
+    if (histErr) console.warn("Moderation history not recorded:", histErr.message);
 
     showStatus("uploadStatus", `Product status updated to ${newStatus.toUpperCase()}.`, "success");
     await loadProducts();
@@ -1297,144 +1238,189 @@ async function changeProductStatus(product, newStatus, button, rejectionReason){
   }
 }
 
-/* PERMANENT PRODUCT DELETION */
-async function deleteProduct(product, button){
+/* ---------- Permanent deletion ---------- */
+async function deleteProduct(product, button) {
   if (!adminVerified || !currentUser || actionInProgress) return;
-  if (!confirm(`PERMANENT PRODUCT DELETION\n\nDelete "${product.title}" and its related records and files?\nThis cannot be undone.`)) return;
-  const typed = prompt(`Type DELETE to confirm permanent deletion of "${product.title}":`);
+  if (!confirm(`PERMANENT DELETION\n\nDelete "${product.title}" and its licences and files?\nThis cannot be undone.`)) return;
+  const typed = prompt(`Type DELETE to confirm deletion of "${product.title}":`);
   if ((typed || "").trim().toUpperCase() !== "DELETE") return alert("Deletion cancelled.");
 
   actionInProgress = true;
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = "Deleting...";
-  let databaseChangesStarted = false, mainProductDeleted = false;
 
   try {
     const { data: current, error: readErr } = await supabaseClient
       .from("products")
       .select("id,title,product_type,download_file_path,cover_image_path,preview_audio_path")
-      .eq("id", product.id)
-      .single();
+      .eq("id", product.id).single();
     if (readErr) throw readErr;
 
-    const { data: licences } = await supabaseClient.from("product_licenses").select("id").eq("product_id", product.id);
+    const { data: licences, error: licErr } = await supabaseClient.from("product_licenses").select("id").eq("product_id", product.id);
+    if (licErr) throw licErr;
     const licenceIds = (licences || []).map(l => l.id);
+
     let licenceFilePaths = [];
     if (licenceIds.length) {
-      const { data: files } = await supabaseClient.from("product_license_files").select("file_path").in("license_id", licenceIds);
+      const { data: files, error: fErr } = await supabaseClient.from("product_license_files").select("file_path").in("license_id", licenceIds);
+      if (fErr) throw fErr;
       licenceFilePaths = (files || []).map(f => f.file_path).filter(Boolean);
     }
 
-    databaseChangesStarted = true;
+    // Refuse if sales exist: deleting would break order history and entitlements
     if (licenceIds.length) {
-      await supabaseClient.from("product_license_files").delete().in("license_id", licenceIds);
-      await supabaseClient.from("product_licenses").delete().in("id", licenceIds);
+      const { count, error: cErr } = await supabaseClient.from("license_sales").select("id", { count: "exact", head: true }).in("license_id", licenceIds);
+      if (cErr) throw cErr;
+      if ((count || 0) > 0) throw new Error("This product has sales and cannot be deleted. Withdraw it by returning it to draft instead.");
+    }
+
+    const { count: orderCount, error: oErr } = await supabaseClient.from("order_items").select("id", { count: "exact", head: true }).eq("product_id", product.id);
+    if (oErr) throw oErr;
+    if ((orderCount || 0) > 0) throw new Error("This product appears in past orders and cannot be deleted. Withdraw it by returning it to draft instead.");
+
+    if (licenceIds.length) {
+      const { error: e1 } = await supabaseClient.from("product_license_files").delete().in("license_id", licenceIds);
+      if (e1) throw e1;
+      const { error: e2 } = await supabaseClient.from("product_licenses").delete().in("id", licenceIds);
+      if (e2) throw e2;
     }
     if (current.product_type === "beat") {
-      await supabaseClient.from("beat_details").delete().eq("product_id", product.id);
+      const { error: e3 } = await supabaseClient.from("beat_details").delete().eq("product_id", product.id);
+      if (e3) throw e3;
     }
 
-    const { data: deletedProduct, error: delErr } = await supabaseClient.from("products").delete().eq("id", product.id).select("id").maybeSingle();
+    const { data: deleted, error: delErr } = await supabaseClient.from("products").delete().eq("id", product.id).select("id").maybeSingle();
     if (delErr) throw delErr;
-    if (!deletedProduct) throw new Error("Product record was not deleted (check RLS or existing orders/entitlements).");
-    mainProductDeleted = true;
+    if (!deleted) throw new Error("The product was not deleted. Check your permissions.");
 
-    const dlPaths = [current.download_file_path, ...licenceFilePaths].filter(Boolean);
-    const pvPaths = [current.cover_image_path, current.preview_audio_path].filter(Boolean);
-    if (dlPaths.length) await supabaseClient.storage.from(DOWNLOAD_BUCKET).remove([...new Set(dlPaths)]);
-    if (pvPaths.length) await supabaseClient.storage.from(PREVIEW_BUCKET).remove([...new Set(pvPaths)]);
+    const downloads = [current.download_file_path, ...licenceFilePaths].filter(Boolean);
+    const previews = [current.cover_image_path, current.preview_audio_path].filter(Boolean);
+    await removeUploadedFiles(DOWNLOAD_BUCKET, downloads);
+    await removeUploadedFiles(PREVIEW_BUCKET, previews);
 
     showStatus("uploadStatus", `Product "${current.title}" permanently deleted.`, "success");
     await Promise.all([loadProducts(), loadAnalytics()]);
   } catch (err) {
-    showStatus("uploadStatus", "Deletion failed:\n\n" + err.message + (databaseChangesStarted && !mainProductDeleted ? "\n\nRefresh and inspect state." : ""), "error");
+    showStatus("uploadStatus", "Deletion failed:\n\n" + err.message, "error");
     button.disabled = false;
     button.textContent = originalText;
-    await loadProducts();
   } finally {
     actionInProgress = false;
   }
 }
 
-/* VENDORS & PAYOUTS */
-async function loadVendorApplications(){
+/* ---------- Vendor applications ---------- */
+async function loadVendorApplications() {
   const box = document.getElementById("vendorApplicationsList");
-  const { data, error } = await supabaseClient.from("vendor_applications").select("*").order("created_at", { ascending: false }).limit(50);
-  if (error) { box.innerHTML = '<div class="empty-state">Could not load applications.</div>'; return; }
+  const { data, error } = await supabaseClient
+    .from("vendor_applications")
+    .select("id,user_id,stage_name,genres,bio,payout_bank_name,payout_account_number,payout_account_name,status,review_notes,created_at")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) { box.innerHTML = '<div class="empty-state">Could not load applications: ' + escapeHTML(error.message) + '</div>'; return; }
   if (!data?.length) { box.innerHTML = '<div class="empty-state">No vendor applications yet.</div>'; return; }
 
   box.innerHTML = data.map(app => `
-    <div class="license-review">
-      <strong>${escapeHTML(app.stage_name)}</strong> ${statusBadge(app.status)}
+    <div class="license-review" data-app-id="${escapeHTML(app.id)}">
+      <strong>${escapeHTML(app.stage_name || "Unnamed")}</strong> ${statusBadge(app.status)}
       <div class="product-meta">
-        Genres: ${escapeHTML(app.genres || "N/A")} · Bank: ${escapeHTML(app.payout_bank_name || "N/A")} (${escapeHTML(app.payout_account_number || "N/A")} · ${escapeHTML(app.payout_account_name || "N/A")})<br>
-        Bio: ${escapeHTML(app.bio || "N/A")}
+        Genres: ${escapeHTML(app.genres || "N/A")}<br>
+        Bio: ${escapeHTML(app.bio || "N/A")}<br>
+        Payout: ${escapeHTML(app.payout_bank_name || "N/A")} · ${escapeHTML(app.payout_account_number || "N/A")} · ${escapeHTML(app.payout_account_name || "N/A")}
       </div>
       ${app.status === "pending" ? `
         <div class="product-actions">
-          <button class="btn btn-success" type="button" onclick="reviewVendorApp('${escapeHTML(app.id)}', '${escapeHTML(app.user_id)}', '${escapeHTML(app.stage_name)}', 'approved')">Approve Vendor</button>
-          <button class="btn btn-danger" type="button" onclick="reviewVendorApp('${escapeHTML(app.id)}', '${escapeHTML(app.user_id)}', '${escapeHTML(app.stage_name)}', 'rejected')">Reject</button>
+          <button class="btn btn-success" type="button" data-decision="approved">Approve Vendor</button>
+          <button class="btn btn-danger" type="button" data-decision="rejected">Reject</button>
         </div>` : ""}
     </div>
   `).join("");
+
+  box.querySelectorAll("[data-decision]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("[data-app-id]");
+      const app = data.find(a => a.id === row.dataset.appId);
+      reviewVendorApplication(app, btn.dataset.decision);
+    });
+  });
 }
 
-window.reviewVendorApp = async (appId, userId, stageName, decision) => {
-  const notes = decision === "rejected" ? (prompt("Rejection note:") || "Application not approved") : "Approved by administrator";
-  const { error } = await supabaseClient.from("vendor_applications").update({
-    status: decision, review_notes: notes, reviewed_by: currentUser.id, reviewed_at: new Date().toISOString()
-  }).eq("id", appId);
+async function reviewVendorApplication(app, decision) {
+  if (!app || !currentUser) return;
+  let notes = "Approved by administrator";
+  if (decision === "rejected") {
+    notes = (prompt("Reason for rejecting this application:") || "").trim();
+    if (!notes) return alert("A reason is required to reject an application.");
+  }
+
+  const now = new Date().toISOString();
+  const { data: updated, error } = await supabaseClient
+    .from("vendor_applications")
+    .update({ status: decision, review_notes: notes, reviewed_by: currentUser.id, reviewed_at: now })
+    .eq("id", app.id)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
   if (error) return alert(error.message);
+  if (!updated) return alert("This application has already been reviewed.");
 
   if (decision === "approved") {
-    const { data: vp, error: vpErr } = await supabaseClient.from("vendor_profiles").upsert({
-      user_id: userId, stage_name: stageName, is_active: true, approved_by: currentUser.id
-    }, { onConflict: "user_id" }).select("id").single();
-    if (vpErr) return alert(vpErr.message);
-    await supabaseClient.from("vendor_balances").upsert({ vendor_id: vp.id }, { onConflict: "vendor_id" });
-    await supabaseClient.from("profiles").update({ role: "vendor" }).eq("id", userId);
-  }
-  await Promise.all([loadVendorApplications(), loadAnalytics()]);
-};
+    // Creates the vendor profile and balance row. Role change is handled by the database.
+    const { data: vp, error: vpErr } = await supabaseClient.from("vendor_profiles")
+      .upsert({
+        user_id: app.user_id,
+        stage_name: app.stage_name,
+        bio: app.bio,
+        genres: app.genres,
+        is_active: true,
+        approved_by: currentUser.id,
+        updated_at: now
+      }, { onConflict: "user_id" })
+      .select("id")
+      .single();
+    if (vpErr) return alert("Application approved but the vendor profile could not be created: " + vpErr.message);
 
-async function loadPayoutRequests(){
+    const { error: balErr } = await supabaseClient.from("vendor_balances")
+      .upsert({ vendor_id: vp.id }, { onConflict: "vendor_id", ignoreDuplicates: true });
+    if (balErr) console.warn("Balance row not created:", balErr.message);
+
+    const { error: payErr } = await supabaseClient.from("vendor_payout_details")
+      .upsert({
+        vendor_id: vp.id,
+        method: "bank_transfer",
+        details: {
+          bank_name: app.payout_bank_name,
+          account_number: app.payout_account_number,
+          account_name: app.payout_account_name
+        },
+        updated_at: now
+      }, { onConflict: "vendor_id" });
+    if (payErr) console.warn("Payout details not saved:", payErr.message);
+  }
+
+  showStatus("uploadStatus", `Vendor application ${decision}.`, "success");
+  await Promise.all([loadVendorApplications(), loadAnalytics()]);
+}
+
+/* ---------- Payout requests (read-only here; processing is done by the database function) ---------- */
+async function loadPayoutRequests() {
   const box = document.getElementById("payoutRequestsList");
-  const { data, error } = await supabaseClient.from("payout_requests").select("*,vendor_profiles(stage_name)").order("created_at", { ascending: false }).limit(50);
-  if (error) { box.innerHTML = '<div class="empty-state">Could not load payout requests.</div>'; return; }
-  if (!data?.length) { box.innerHTML = '<div class="empty-state">No payout requests recorded.</div>'; return; }
+  const { data, error } = await supabaseClient
+    .from("payout_requests")
+    .select("id,vendor_id,amount_kobo,status,created_at,processed_at,vendor_profiles(stage_name)")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) { box.innerHTML = '<div class="empty-state">Could not load payout requests: ' + escapeHTML(error.message) + '</div>'; return; }
+  if (!data?.length) { box.innerHTML = '<div class="empty-state">No withdrawal requests recorded.</div>'; return; }
 
   box.innerHTML = data.map(p => `
     <div class="license-review">
-      <strong>${escapeHTML(p.vendor_profiles?.stage_name || "Vendor")}</strong> · ${formatMoney(p.amount_kobo)} ${statusBadge(p.status)}
-      <div class="product-meta">Requested: ${new Date(p.created_at).toLocaleDateString()}</div>
-      ${p.status === "pending" ? `
-        <div class="product-actions">
-          <button class="btn btn-success" type="button" onclick="processPayout('${escapeHTML(p.id)}', '${escapeHTML(p.vendor_id)}', ${Number(p.amount_kobo)}, 'paid')">Mark Paid</button>
-          <button class="btn btn-danger" type="button" onclick="processPayout('${escapeHTML(p.id)}', '${escapeHTML(p.vendor_id)}', ${Number(p.amount_kobo)}, 'rejected')">Reject Payout</button>
-        </div>` : ""}
+      <strong>${escapeHTML(p.vendor_profiles?.stage_name || "Vendor")}</strong> · ${formatMoney(p.amount_kobo)} ${statusBadge(p.status === "pending" ? "pending" : (p.status === "paid" ? "approved" : "unknown"))}
+      <div class="product-meta">Requested ${new Date(p.created_at).toLocaleDateString()}${p.processed_at ? " · Processed " + new Date(p.processed_at).toLocaleDateString() : ""} · Status: ${escapeHTML(p.status)}</div>
     </div>
   `).join("");
 }
-
-window.processPayout = async (payoutId, vendorId, amountKobo, status) => {
-  const { error } = await supabaseClient.from("payout_requests").update({
-    status, processed_by: currentUser.id, processed_at: new Date().toISOString()
-  }).eq("id", payoutId).eq("status", "pending");
-  if (error) return alert(error.message);
-
-  if (status === "paid") {
-    const { data: bal } = await supabaseClient.from("vendor_balances").select("*").eq("vendor_id", vendorId).single();
-    if (bal) {
-      await supabaseClient.from("vendor_balances").update({
-        available_kobo: Math.max(0, Number(bal.available_kobo || 0) - amountKobo),
-        total_paid_kobo: Number(bal.total_paid_kobo || 0) + amountKobo,
-        updated_at: new Date().toISOString()
-      }).eq("vendor_id", vendorId);
-    }
-  }
-  await loadPayoutRequests();
-};
 
 initialise();
 </script>
